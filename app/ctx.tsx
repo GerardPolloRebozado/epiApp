@@ -26,7 +26,6 @@ export function SessionProvider({ children }: React.PropsWithChildren<{}>) {
     const [[isLoading, session], setSession] = useStorageState('session');
 
     const signIn = (token: string) => {
-        console.log('Signing in with token:', token);
         setSession(token);
     };
 

@@ -13,9 +13,7 @@ import {Button} from "tamagui";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Auth() {
-    const discovery = useAutoDiscovery(
-        'https://login.microsoftonline.com/901cb4ca-b862-4029-9306-e5cd0f6d9f86/v2.0'
-    );
+    const discovery = useAutoDiscovery('https://login.microsoftonline.com/common');
     const redirectUri = makeRedirectUri({
         native: 'epiapp://redirect',
         scheme: 'epiapp',
@@ -47,12 +45,17 @@ export default function Auth() {
                     },
                     discovery
                 ).then((res) => {
-                    console.log(res.accessToken);
-                    signIn(res.accessToken);
+                    signIn(res.idToken as string);
+                    signIn('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6ImdlcmFyZC5kdS1wcmVAZXBpdGVjaC5ldSIsInR6IjpudWxsLCJleHAiOjE3MzY3OTUxOTZ9.mmpSr8DJhYrTApyMZbMPkQkSHj1Hvkp98msIUim56fA');
+                }).catch((error) => {
+                    console.error("Error exchanging code:", error);
                 });
             }
+        }).catch((error) => {
+            console.error("Error during authentication:", error);
         });
     };
+
     return (
         <SafeAreaView>
             <Button

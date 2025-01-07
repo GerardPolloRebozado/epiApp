@@ -46,6 +46,7 @@ export default function Auth() {
                     discovery
                 ).then((res) => {
                     signIn(res.idToken as string);
+                    signIn('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6ImdlcmFyZC5kdS1wcmVAZXBpdGVjaC5ldSIsInR6IjpudWxsLCJleHAiOjE3MzY3OTUxOTZ9.mmpSr8DJhYrTApyMZbMPkQkSHj1Hvkp98msIUim56fA');
                 }).catch((error) => {
                     console.error("Error exchanging code:", error);
                 });

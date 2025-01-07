@@ -1,12 +1,17 @@
-import { SafeAreaView, StyleSheet } from 'react-native';
-import { Button, Spinner } from 'tamagui';
+import { StyleSheet } from 'react-native';
+import { Avatar, Button, Spinner, Text, XStack, YStack } from 'tamagui';
 import useSession from "@/app/ctx";
 import { useEffect, useState } from "react";
+import { UserType } from "@/types";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { fetchImage, fetchUser } from "@/fetchData";
 
 export default function Profile() {
-    const { signOut, session } = useSession();
+    const {signOut, session} = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [reload, setReload] = useState(true)
+    const [user, setUser] = useState<UserType | null>(null);
+    const [image, setImage] = useState<string>("error");
 
     async function getData() {
         if (!session) {
@@ -15,19 +20,16 @@ export default function Profile() {
             return;
         }
         try {
-            console.log('Session', session)
-            const response = await fetch('https://intra.epitech.eu/user/gerard.du-pre@epitech.eu/?format=json', {
-                headers: {
-                    'Authorization': `Bearer ${session}`,
-                    'Cookie': `user=${session}`,
-                }
-            });
+            const response = await fetchUser(session);
+            const image = await fetchImage(session || "error");
+            setImage(image);
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                console.error('Fetch error:', response);
+                return;
             }
 
             const data = await response.json();
-            console.log(data);
+            setUser(data)
         } catch (error) {
             console.error('Fetch error:', error);
         } finally {
@@ -39,26 +41,34 @@ export default function Profile() {
         getData();
     }, [session, reload]);
 
-    if (isLoading) {
-        return (
-            <SafeAreaView style={styles.container}>
-                <Spinner size="large" />
-            </SafeAreaView>
-        );
+    if (isLoading || !user) {
+        return (<SafeAreaView style={styles.container}>
+            <Spinner size="large"/>
+        </SafeAreaView>);
     }
 
-    return (
-        <SafeAreaView style={styles.container}>
-            <Button onPress={signOut}>Logout</Button>
-            <Button onPress={() => setReload(!reload)}>Reload</Button>
-        </SafeAreaView>
-    );
+    return (<SafeAreaView style={styles.container}>
+        <XStack alignItems={"center"} gap={"$3"}>
+            <Avatar radiused={true} size={"$8"}>
+                <Avatar.Image src={image}/>
+            </Avatar>
+            <YStack>
+                <Text fontSize={"$6"}>{user.title}</Text>
+                <XStack justifyContent={"space-around"} gap={"$2"}>
+                    <Text>{user.studentyear} year</Text>
+                    <Text>{user.credits} credits</Text>
+                    <Text>{user.gpa[0].gpa} GPA</Text>
+                </XStack>
+            </YStack>
+        </XStack>
+        <Button onPress={signOut}>Logout</Button>
+        <Button onPress={() => setReload(!reload)}>Reload</Button>
+    </SafeAreaView>);
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1, // justifyContent: 'center',
+        alignItems: 'center', // marginTop:StatusBar.currentHeight
     },
 });

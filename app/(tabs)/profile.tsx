@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
-import { Avatar, Button, Spinner, Text, XStack, YStack } from 'tamagui';
 import useSession from "@/app/ctx";
 import { useEffect, useState } from "react";
 import { UserType } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchImage, fetchUser } from "@/fetchData";
+import { XStack, Avatar, Spinner, YStack, Button, Text } from 'tamagui';
 
 export default function Profile() {
     const {signOut, session} = useSession();
@@ -68,7 +68,7 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1, // justifyContent: 'center',
-        alignItems: 'center', // marginTop:StatusBar.currentHeight
+        flex: 1,
+        alignItems: 'center',
     },
 });

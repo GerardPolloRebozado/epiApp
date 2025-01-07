@@ -34,3 +34,26 @@ export type UserType = {
     userdocs?: string,
     userinfo: any,
 }
+
+export type Activity = {
+    title_module: string;
+    codemodule: string;
+    scolaryear: string;
+    codeinstance: string;
+    code_location: string;
+    begin_event: string | null;
+    end_event: string | null;
+    seats: number | null;
+    num_event: number | null;
+    type_acti: string;
+    type_acti_code: string;
+    codeacti: string;
+    acti_title: string;
+    num: string;
+    begin_acti: string;
+    end_acti: string;
+    registered: number;
+    info_creneau: string | null;
+    project: string;
+    rights: string[];
+};

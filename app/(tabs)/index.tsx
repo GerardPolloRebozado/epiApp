@@ -1,74 +1,86 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect, useState } from "react";
+import { Activity, UserType } from "@/types";
+import useSession from "@/app/ctx";
+import { ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack } from "tamagui";
+import { fetchActivities, fetchUser } from "@/fetchData";
+import { StyleSheet } from "react-native";
+import ActivityCard from "@/components/ActivityCard";
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    const {session} = useSession();
+    const [user, setUser] = useState<UserType | null>(null);
+    const [activityList, setActivityList] = useState<Activity[] | null>(null);
+
+    useEffect(() => {
+        async function fetchDate() {
+            if (!session) return;
+            const userResponse = await fetchUser(session);
+            if (!userResponse.ok) {
+                console.error('Fetch error:', userResponse);
+                return;
+            }
+            const userBody = await userResponse.json();
+            setUser(userBody);
+            const activityResponse = await fetchActivities(session)
+            if (!activityResponse.ok) {
+                console.error('Fetch error:', activityResponse);
+                return;
+            }
+            const activityBody = await activityResponse.json();
+            setActivityList(activityBody);
+        }
+
+        fetchDate();
+    }, [session]);
+
+    if (!user || !Array.isArray(activityList)) {
+        return (<SafeAreaView style={styles.container}>
+            <Spinner size="large"/>
+        </SafeAreaView>);
+    }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <Text fontSize={"$6"}>Welcome, {user?.title}</Text>
+            <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={"70%"} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} >
+                <Tabs.List marginBottom={"$4"}>
+                    <Tabs.Tab value={"activity"}>
+                        <SizableText>Activities</SizableText>
+                    </Tabs.Tab>
+                    <Tabs.Tab value={"project"}>
+                        <SizableText>Projects</SizableText>
+                    </Tabs.Tab>
+                </Tabs.List>
+                <Separator vertical={true}/>
+                <Tabs.Content value={"activity"}>
+                    <ScrollView>
+                        <YStack gap={"$4"}>
+                            {activityList.map((activity) => (
+                                <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"activity"}/>
+                            ))}
+                        </YStack>
+                    </ScrollView>
+                </Tabs.Content>
+                <Tabs.Content value={"project"}>
+                    <ScrollView>
+                        <YStack gap={"$4"}>
+                            {activityList.map((activity) => (
+                                <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"project"}/>
+                            ))}
+                        </YStack>
+                    </ScrollView>
+                </Tabs.Content>
+            </Tabs>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        marginHorizontal: 4,
+        marginTop: 10,
+    },
 });

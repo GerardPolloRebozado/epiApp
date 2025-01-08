@@ -5,18 +5,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
-import { createTamagui, TamaguiProvider } from "tamagui";
-import { config } from "@tamagui/config/v3";
+import { TamaguiProvider } from "tamagui";
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { SessionProvider } from './ctx';
+import { config } from "@/tamagui.config";
 
 SplashScreen.preventAutoHideAsync();
-const tamaguiConfig = createTamagui(config);
-
-type Conf = typeof tamaguiConfig;
-declare module '@tamagui/core' {
-    interface TamaguiCustomConfig extends Conf {}
-}
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -35,7 +29,7 @@ export default function RootLayout() {
     }
 
     return (
-        <TamaguiProvider config={tamaguiConfig} defaultTheme={colorScheme!}>
+        <TamaguiProvider config={config} defaultTheme={colorScheme!}>
             <ThemeProvider
                 value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <SessionProvider>

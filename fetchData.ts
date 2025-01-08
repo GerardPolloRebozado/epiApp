@@ -30,11 +30,9 @@ export async function fetchImage(session: string): Promise<string> {
 
 export async function fetchActivities(session: string) {
     let date = new Date()
-    //start must be monday of this week and end sunday of this week
     date.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1))
     const start = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
     date.setDate(date.getDate() + 6)
     const end = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
-    console.log(start);
     return await fetchEpitech(`module/board?format=json&start=${start}&end=${end}`,session)
 }

@@ -46,7 +46,7 @@ export type Activity = {
     seats: number | null;
     num_event: number | null;
     type_acti: string;
-    type_acti_code: string;
+    type_acti_code: string | "proj" | "class" | "rdv" | "other" | "tp" | "exam"
     codeacti: string;
     acti_title: string;
     num: string;
@@ -57,3 +57,6 @@ export type Activity = {
     project: string;
     rights: string[];
 };
+
+export type ActivityType = "activity" | "project"
+export type ActivityCode = Activity['type_acti_code']

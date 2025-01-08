@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { Activity, UserType } from "@/types";
 import useSession from "@/app/ctx";
-import { ScrollView, Spinner, Text, YStack } from "tamagui";
+import { ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack } from "tamagui";
 import { fetchActivities, fetchUser } from "@/fetchData";
 import { StyleSheet } from "react-native";
 import ActivityCard from "@/components/ActivityCard";
@@ -43,13 +43,35 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Text fontSize={"$6"}>Welcome, {user?.title}</Text>
-            <ScrollView maxHeight={320} bottom={0} position={"absolute"}>
-                <YStack gap={"$4"}>
-                    {activityList.map((activity) => (
-                        <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event}/>
-                    ))}
-                </YStack>
-            </ScrollView>
+            <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={400} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} >
+                <Tabs.List marginBottom={"$4"}>
+                    <Tabs.Tab value={"activity"}>
+                        <SizableText>Activities</SizableText>
+                    </Tabs.Tab>
+                    <Tabs.Tab value={"project"}>
+                        <SizableText>Projects</SizableText>
+                    </Tabs.Tab>
+                </Tabs.List>
+                <Separator vertical={true}/>
+                <Tabs.Content value={"activity"}>
+                    <ScrollView>
+                        <YStack gap={"$4"}>
+                            {activityList.map((activity) => (
+                                <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"activity"}/>
+                            ))}
+                        </YStack>
+                    </ScrollView>
+                </Tabs.Content>
+                <Tabs.Content value={"project"}>
+                    <ScrollView>
+                        <YStack gap={"$4"}>
+                            {activityList.map((activity) => (
+                                <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"project"}/>
+                            ))}
+                        </YStack>
+                    </ScrollView>
+                </Tabs.Content>
+            </Tabs>
         </SafeAreaView>
     );
 }

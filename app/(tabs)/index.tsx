@@ -34,7 +34,7 @@ export default function HomeScreen() {
         fetchDate();
     }, [session]);
 
-    if (!activityList || !user) {
+    if (!user || !Array.isArray(activityList)) {
         return (<SafeAreaView style={styles.container}>
             <Spinner size="large"/>
         </SafeAreaView>);
@@ -43,7 +43,7 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Text fontSize={"$6"}>Welcome, {user?.title}</Text>
-            <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={400} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} >
+            <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={"70%"} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} >
                 <Tabs.List marginBottom={"$4"}>
                     <Tabs.Tab value={"activity"}>
                         <SizableText>Activities</SizableText>
@@ -81,5 +81,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         marginHorizontal: 4,
+        marginTop: 10,
     },
 });

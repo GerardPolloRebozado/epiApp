@@ -1,6 +1,7 @@
 import { ListItem, Text } from "tamagui";
 import { CircleCheck, CircleX } from "@tamagui/lucide-icons";
 import { Activity, ActivityType } from "@/types";
+import { Link } from "expo-router";
 
 export default function ActivityCard({activity, type}: { activity: Activity, type: ActivityType }) {
     let dateText;
@@ -38,8 +39,10 @@ export default function ActivityCard({activity, type}: { activity: Activity, typ
     }
 
     return (
-        <ListItem key={activity.codeacti + activity.begin_event} bordered radiused justifyContent={"flex-start"} alignContent={"center"} gap={"$2"}>
-            {activity.registered === 0 ? <CircleX/> : <CircleCheck/>}<Text maxWidth={"60%"}> {activity.acti_title}</Text> <Text>{dateText}</Text>
-        </ListItem>
+        <Link href={`/activity?year=${activity.scolaryear}&module=${activity.codemodule}&city=${activity.codeinstance}&activity=${activity.codeacti}`}>
+            <ListItem key={activity.codeacti + activity.begin_event} bordered radiused justifyContent={"flex-start"} alignContent={"center"} gap={"$2"}>
+                {activity.registered === 0 ? <CircleX/> : <CircleCheck/>}<Text maxWidth={"60%"}> {activity.acti_title}</Text> <Text>{dateText}</Text>
+            </ListItem>
+        </Link>
     )
 }

@@ -6,11 +6,13 @@ import { ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack } from 
 import { fetchActivities, fetchUser } from "@/fetchData";
 import { StyleSheet } from "react-native";
 import ActivityCard from "@/components/ActivityCard";
+import { registerBackgroundFetchAsync } from "@/backgroundTasks/fetchActivities";
 
 export default function HomeScreen() {
     const {session} = useSession();
     const [user, setUser] = useState<UserType | null>(null);
     const [activityList, setActivityList] = useState<Activity[] | null>(null);
+    registerBackgroundFetchAsync().then(() => console.log('Background fetch registered'));
 
     useEffect(() => {
         async function fetchDate() {

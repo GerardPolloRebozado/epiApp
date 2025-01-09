@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import 'react-native-reanimated';
 import React from 'react';
 import { Text} from 'react-native';
 import { Redirect } from 'expo-router';

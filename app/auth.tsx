@@ -15,7 +15,7 @@ WebBrowser.maybeCompleteAuthSession();
 export default function Auth() {
     const discovery = useAutoDiscovery('https://login.microsoftonline.com/common');
     const redirectUri = makeRedirectUri({
-        native: 'epiapp://redirect',
+        native: 'epiapp://auth',
         scheme: 'epiapp',
     });
     const clientId = '323f813d-f69d-4f22-84d0-6bcb81caa093';
@@ -64,6 +64,7 @@ export default function Auth() {
             >
                 Sign in
             </Button>
+            <Button onPress={() => signIn("guest")}>Guest mode</Button>
             <Text>{session ? 'Logged in' : 'Not logged in'}</Text>
         </SafeAreaView>
     );

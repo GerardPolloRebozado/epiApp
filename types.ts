@@ -7,7 +7,12 @@ export type UserType = {
     editable: true,
     events: any,
     firstname: string,
-    gpa: any,
+    gpa: [
+        {
+            gpa: string,
+            cycle: string,
+        }
+    ]
     groups: any,
     id_history: string,
     id_promo: string,

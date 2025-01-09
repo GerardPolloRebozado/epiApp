@@ -34,7 +34,7 @@ async function setLargeItemAsync(key: string, value: string | null) {
     }
 }
 
-async function getLargeItemAsync(key: string): Promise<string | null> {
+export async function getLargeItemAsync(key: string): Promise<string | null> {
     const countStr = await SecureStore.getItemAsync(`${key}_count`);
     if (!countStr) return null;
 

@@ -59,7 +59,6 @@ xcuserdata
 *.apk
 *.hprof
 ReactAndroid-temp.aar
-android
 
 # Tools
 jarjar-rules.txt

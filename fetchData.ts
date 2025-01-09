@@ -10,7 +10,7 @@ async function fetchEpitech(url: string, session: string, method?: "GET" | "POST
 }
 
 export async function fetchUser(session: string) {
-    return await fetchEpitech(`user/${JWT.decode(session || "error", null).login}?format=json`, session)
+    return await fetchEpitech(`user/${JWT.decode(session, null).login}?format=json`, session)
 }
 
 export async function fetchImage(session: string): Promise<string> {
@@ -44,4 +44,8 @@ export async function fetchActivity(session: string, year: string, module: strin
 
 export async function registerActivity(session: string, year: string, module: string, city: string, activity: string, event: string, register: boolean) {
     return await fetchEpitech(`module/${year}/${module}/${city}/${activity}/${event}/${register ? "register" : "unregister"}?format=json`, session, 'POST')
+}
+
+export async function fetchMarks(session: string) {
+    return await fetchEpitech(`user/${JWT.decode(session, null).login}/notes?format=json`, session)
 }

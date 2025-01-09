@@ -1,71 +1,44 @@
-import * as WebBrowser from 'expo-web-browser';
-import {
-    exchangeCodeAsync,
-    makeRedirectUri,
-    useAuthRequest,
-    useAutoDiscovery,
-} from 'expo-auth-session';
-import {Text, SafeAreaView} from 'react-native';
 import useSession from "@/app/ctx";
-import {Redirect} from "expo-router";
-import {Button} from "tamagui";
+import { Redirect } from "expo-router";
+import CookieManager from '@react-native-cookies/cookies';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, Card, Paragraph } from "tamagui";
+import * as Browser from 'react-native-inappbrowser-reborn';
+import { Alert } from "react-native";
 
-WebBrowser.maybeCompleteAuthSession();
 
 export default function Auth() {
-    const discovery = useAutoDiscovery('https://login.microsoftonline.com/common');
-    const redirectUri = makeRedirectUri({
-        native: 'epiapp://auth',
-        scheme: 'epiapp',
-    });
-    const clientId = '323f813d-f69d-4f22-84d0-6bcb81caa093';
-    const [request, , promptAsync] = useAuthRequest(
-        {
-            clientId,
-            scopes: ['openid', 'profile', 'email', 'offline_access'],
-            redirectUri,
-        },
-        discovery
-    );
     const {session, signIn} = useSession();
     if (session) {
         return <Redirect href={'/'}/>;
     }
-    const handleSignIn = () => {
-        promptAsync().then((codeResponse) => {
-            if (request && codeResponse?.type === 'success' && discovery) {
-                exchangeCodeAsync(
-                    {
-                        clientId,
-                        code: codeResponse.params.code,
-                        extraParams: request.codeVerifier
-                            ? {code_verifier: request.codeVerifier}
-                            : undefined,
-                        redirectUri,
-                    },
-                    discovery
-                ).then((res) => {
-                    signIn(res.idToken as string);
-                    signIn('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJsb2dpbiI6ImdlcmFyZC5kdS1wcmVAZXBpdGVjaC5ldSIsInR6IjpudWxsLCJleHAiOjE3MzY3OTUxOTZ9.mmpSr8DJhYrTApyMZbMPkQkSHj1Hvkp98msIUim56fA');
-                }).catch((error) => {
-                    console.error("Error exchanging code:", error);
-                });
+
+    async function auth() {
+        const url = 'https://intra.epitech.eu';
+        try {
+            if (await Browser.InAppBrowser.isAvailable()) {
+                await Browser.InAppBrowser.open(url);
+                const tokens = await CookieManager.get(url);
+                if (tokens.user) {
+                    signIn(tokens.user.value);
+                } else {
+                    Alert.alert('Error', 'An error occurred while trying to authenticate');
+                    auth();
+                }
+            } else {
+                Alert.alert('Error', 'InAppBrowser is not available contact the developer');
             }
-        }).catch((error) => {
-            console.error("Error during authentication:", error);
-        });
-    };
+        } catch (e) {
+            Alert.alert('Error', 'An error occurred while trying to authenticate');
+        }
+    }
 
     return (
         <SafeAreaView>
-            <Button
-                disabled={!request}
-                onPress={handleSignIn}
-            >
-                Sign in
-            </Button>
-            <Button onPress={() => signIn("guest")}>Guest mode</Button>
-            <Text>{session ? 'Logged in' : 'Not logged in'}</Text>
+            <Card justifyContent={"center"} marginHorizontal={"$4"} marginTop={"$6"} bordered radiused>
+                <Card.Header><Paragraph>After pressing signin the login page will open please close the browser when you finish the signin</Paragraph></Card.Header>
+                <Card.Footer><Button width={"100%"} onPress={auth}>Signin</Button></Card.Footer>
+            </Card>
         </SafeAreaView>
     );
 }

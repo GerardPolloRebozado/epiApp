@@ -3,7 +3,7 @@ import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { fetchActivity, registerActivity } from "@/fetchData";
 import useSession from "@/app/ctx";
-import { ActivityExtended } from "@/types";
+import { ActivityExtendedType } from "@/types";
 import { Button, Card, H6, Paragraph, ScrollView, Spinner, XStack, YStack } from "tamagui";
 import { StyleSheet } from "react-native";
 
@@ -14,7 +14,7 @@ export default function Activity() {
         return <Redirect href={"/auth"}/>
     }
     const local = useLocalSearchParams<{ activity: string, city: string, module: string, year: string }>();
-    const [activity, setActivity] = useState<ActivityExtended | null>(null);
+    const [activity, setActivity] = useState<ActivityExtendedType | null>(null);
     const [reload, setReload] = useState(false)
     const [registerLoad, setRegisterLoad] = useState(false)
     useEffect(() => {
@@ -53,7 +53,6 @@ export default function Activity() {
             }
         })
     }
-    console.log(activity)
     return (
         <SafeAreaView style={styles.container}>
             <H6>{activity.title}</H6>

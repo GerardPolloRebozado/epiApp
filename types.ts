@@ -86,11 +86,11 @@ export type EventType = {
     assistants: EventAssistant[];
 };
 
-type StudentRegistered = {
+type StudentRegisteredType = {
     registered: string;
 };
 
-export type ActivityExtended = {
+export type ActivityExtendedType = {
     scolaryear: string;
     codemodule: string;
     codeinstance: string;
@@ -130,6 +130,38 @@ export type ActivityExtended = {
     nb_planified: number;
     hidden: boolean;
     project: string | null;
-    student_registered: StudentRegistered;
+    student_registered: StudentRegisteredType;
     events: EventType[];
 };
+
+export type ModuleType = {
+    barrage: number,
+    codeinstance: string,
+    codemodule: string,
+    credits: number,
+    cycle: string,
+    date_ins: string,
+    grade: string,
+    id_user_history: string,
+    scolaryear: number,
+    title: string,
+    notes: NotesType[]
+}
+
+export type NotesType = {
+    codeacti: string,
+    codeinstance: string,
+    codemodule: string,
+    comment: string,
+    correcteur: string,
+    date: string,
+    final_note: number,
+    scolaryear: number,
+    title: string,
+    titlemodule: string
+}
+
+export type MarksType = {
+    modules: ModuleType[],
+    notes: NotesType[]
+}

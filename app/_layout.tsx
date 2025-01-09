@@ -8,6 +8,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { SessionProvider } from './ctx';
 import { config } from "@/tamagui.config";
 import 'react-native-reanimated'
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,6 +33,7 @@ export default function RootLayout() {
             <ThemeProvider
                 value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <SessionProvider>
+                    <StatusBar style="auto" />
                     <Stack>
                         <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                         <Stack.Screen name="+not-found"/>

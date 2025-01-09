@@ -64,6 +64,7 @@ export default function Auth() {
             >
                 Sign in
             </Button>
+            <Button onPress={() => signIn("guest")}>Guest mode</Button>
             <Text>{session ? 'Logged in' : 'Not logged in'}</Text>
         </SafeAreaView>
     );

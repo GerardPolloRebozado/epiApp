@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { fetchImage, fetchMarks, fetchUser } from "@/fetchData";
 import { Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { Settings } from "@tamagui/lucide-icons";
+import { fakeMarks, fakeUser } from "@/fakeData";
 
 export default function Profile() {
     const {signOut, session} = useSession();
@@ -23,6 +24,12 @@ export default function Profile() {
                 return;
             }
             try {
+                if (session == 'guest') {
+                    setUser(fakeUser)
+                    setMarks(fakeMarks)
+                    setImage(fakeUser.picture)
+                    return
+                }
                 const responseUser = await fetchUser(session);
                 const responseMarks = await fetchMarks(session);
                 const image = await fetchImage(session || "error");

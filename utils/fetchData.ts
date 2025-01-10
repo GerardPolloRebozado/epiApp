@@ -38,8 +38,8 @@ export async function fetchActivities(session: string) {
     return await fetchEpitech(`module/board?format=json&start=${start}&end=${end}`, session)
 }
 
-export async function fetchActivity(session: string, year: string, module: string, city: string, activity: string) {
-    return await fetchEpitech(`module/${year}/${module}/${city}/${activity}/?format=json`, session)
+export async function fetchActivity(session: string, year: string, module: string, city: string, activity: string, project?: boolean) {
+    return await fetchEpitech(`module/${year}/${module}/${city}/${activity}/${project ? 'project/' : ''}?format=json`, session)
 }
 
 export async function registerActivity(session: string, year: string, module: string, city: string, activity: string, event: string, register: boolean) {

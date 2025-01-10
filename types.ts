@@ -170,3 +170,80 @@ export type MarksType = {
     modules: ModuleType[],
     notes: NotesType[]
 }
+
+export type ProjectType = {
+    begin: string;
+    call_ihk: string;
+    closed: boolean;
+    codeacti: string;
+    codeinstance: string;
+    codemodule: string;
+    date_access: boolean;
+    deadline: string;
+    description: string;
+    end: string;
+    end_register: string;
+    forum_path: string | null;
+    id_activite: string;
+    instance_allowed: string;
+    instance_location: string;
+    instance_registered: string;
+    is_rdv: boolean;
+    module_title: string;
+    nb_max: number;
+    nb_min: number;
+    nb_notes: number;
+    notregistered: {
+        course_code: string,
+        credits: number,
+        cycle: string,
+        date_ins: string,
+        flags: any,
+        grade: string,
+        location: string,
+        login: string,
+        picture: string,
+        promo: number,
+        semester: string,
+        title: string,
+    }[];
+    over: number;
+    over_deadline: number;
+    project_title: string;
+    register: boolean;
+    register_by_bloc: string;
+    register_prof: string;
+    registered: {
+        closed: boolean,
+        code: string,
+        final_note: string | null,
+        id: string,
+        master: {
+            date_ins: string,
+            date_modif: string | null,
+            login: string,
+            picture: string,
+            status: string,
+            title: string,
+        }
+        members: any,
+        repository: string,
+        title: string,
+    }[];
+    registered_instance: number;
+    root_slug: string;
+    scolaryear: string;
+    slug: string;
+    title: string;
+    type_code: string;
+    type_title: string;
+    urls: Array<{
+        notation: boolean;
+        title: string;
+        link: string;
+    }>;
+    user_project_code: string;
+    user_project_master: string;
+    user_project_status: string;
+    user_project_title: string;
+};

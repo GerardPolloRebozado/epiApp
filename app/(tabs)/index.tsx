@@ -13,7 +13,7 @@ export default function HomeScreen() {
     const { session } = useSession();
     const [user, setUser] = useState<UserType | null>(null);
     const [activityList, setActivityList] = useState<Activity[] | null>(null);
-    registerBackgroundFetchAsync().then(() => console.log('Background fetch registered'));
+    registerBackgroundFetchAsync()
 
     useEffect(() => {
         async function fetchData() {

@@ -96,47 +96,49 @@ export default function Activity() {
                         <Paragraph>{activity.description}</Paragraph>
                     </Card.Footer>
                 </Card>}
-                {relatedActivities && (
+                {relatedActivities && relatedActivities.length > 0 &&(
                     <ScrollView>
-                        <YStack gap={"$3"} alignItems={"center"}>
+                        <YStack style={styles.scrollView}>
                             <Paragraph>Related activities</Paragraph>
                             {relatedActivities.map((activity) => {
                                 return <Card justifyContent={"center"} padded radiused elevate marginTop={"$2"} key={activity.codeacti} onPress={() => openActivity(activity)}>
-                                        <Card.Header>
-                                            <H6>{activity.title}</H6>
-                                            <Separator/>
-                                        </Card.Header>
-                                        <Card.Footer>
-                                            <XStack gap={"$4"}>
-                                                <Paragraph>{new Date(activity.start).toDateString()}</Paragraph>
-                                                <Paragraph>{transformHours(activity.nb_hours)}</Paragraph>
-                                            </XStack>
-                                        </Card.Footer>
-                                    </Card>
+                                    <Card.Header>
+                                        <H6>{activity.title}</H6>
+                                        <Separator/>
+                                    </Card.Header>
+                                    <Card.Footer>
+                                        <XStack gap={"$4"}>
+                                            <Paragraph>{new Date(activity.start).toDateString()}</Paragraph>
+                                            <Paragraph>{transformHours(activity.nb_hours)}</Paragraph>
+                                        </XStack>
+                                    </Card.Footer>
+                                </Card>
                             })}
                         </YStack>
                     </ScrollView>
                 )}
                 {activity.events.length > 0 && (
-                    <ScrollView maxHeight={"50%"} contentContainerStyle={styles.container}>
-                        <Paragraph>Events</Paragraph>
-                        {activity.events.map((event) => {
-                            return <Card justifyContent={"center"} padded radiused elevate marginTop={"$2"} key={event.code} bordered>
-                                <Card.Header>
-                                    <H6>Event {event.num_event}</H6><Paragraph size={"$4"}>{event.begin} - {event.end.split(" ").at(-1)}</Paragraph>
-                                </Card.Header>
-                                <Card.Footer>
-                                    <YStack>
-                                        <XStack width={"100%"} justifyContent={"space-between"}>
-                                            <Paragraph size={"$4"}>{event.location.split("/")[2]}{"->"}{event.location.split("/").at(-1)}</Paragraph>
-                                            <Paragraph size={"$4"}>{event.nb_inscrits}/{event.seats}</Paragraph>
-                                        </XStack>
-                                        {!registered && <Button onPress={() => buttonRegister(event.code, true)}>{registerLoad ? <Spinner/> : "Register"}</Button>}
-                                        {event.already_register != null && <Button onPress={() => buttonRegister(event.code, false)}>{registerLoad ? <Spinner/> : "Unregister"}</Button>}
-                                    </YStack>
-                                </Card.Footer>
-                            </Card>
-                        })}
+                    <ScrollView>
+                        <YStack style={styles.scrollView}>
+                            <Paragraph>Events</Paragraph>
+                            {activity.events.map((event) => {
+                                return <Card justifyContent={"center"} padded radiused elevate marginTop={"$2"} key={event.code} bordered>
+                                    <Card.Header>
+                                        <H6>Event {event.num_event}</H6><Paragraph size={"$4"}>{event.begin} - {event.end.split(" ").at(-1)}</Paragraph>
+                                    </Card.Header>
+                                    <Card.Footer>
+                                        <YStack>
+                                            <XStack width={"100%"} justifyContent={"space-between"}>
+                                                <Paragraph size={"$4"}>{event.location.split("/")[2]}{"->"}{event.location.split("/").at(-1)}</Paragraph>
+                                                <Paragraph size={"$4"}>{event.nb_inscrits}/{event.seats}</Paragraph>
+                                            </XStack>
+                                            {!registered && <Button onPress={() => buttonRegister(event.code, true)}>{registerLoad ? <Spinner/> : "Register"}</Button>}
+                                            {event.already_register != null && <Button onPress={() => buttonRegister(event.code, false)}>{registerLoad ? <Spinner/> : "Unregister"}</Button>}
+                                        </YStack>
+                                    </Card.Footer>
+                                </Card>
+                            })}
+                        </YStack>
                     </ScrollView>
                 )}
             </YStack>
@@ -150,4 +152,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginHorizontal: 4,
     },
+    scrollView: {
+        alignItems: 'center',
+        gap: '$2'
+    }
 });

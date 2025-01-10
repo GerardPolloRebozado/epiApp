@@ -7,7 +7,6 @@ import { Activity } from "@/types";
 import { getLargeItemAsync } from "@/app/useStorageState";
 
 TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
-    console.log('Background fetch running')
     const session = await getLargeItemAsync('session')
     if (typeof session !== 'string')
         return
@@ -18,7 +17,6 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
     }
     const activities: Activity[] = await res.json()
     const notifications = await Notifications.getAllScheduledNotificationsAsync();
-    const activitiesScheduled: Activity[] = []
     activities.forEach(activity => {
         if (!activity.begin_event) {
             return
@@ -39,10 +37,8 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
                     date: new Date(new Date(activity.begin_event).getTime() - 5 * 60 * 1000)
                 }
             })
-            activitiesScheduled.push(activity)
         }
     })
-    console.log('Scheduled notifications for activities:', activitiesScheduled)
 })
 
 export async function registerBackgroundFetchAsync() {

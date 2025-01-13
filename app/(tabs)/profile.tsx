@@ -3,10 +3,10 @@ import useSession from "@/app/ctx";
 import { useEffect, useState } from "react";
 import { MarksType, NotesType, UserType } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchImage, fetchMarks, fetchUser } from "@/fetchData";
+import { fetchImage, fetchMarks, fetchUser } from "@/utils/fetchData";
 import { Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { Settings } from "@tamagui/lucide-icons";
-import { fakeMarks, fakeUser } from "@/fakeData";
+import { fakeMarks, fakeUser } from "@/utils/fakeData";
 
 export default function Profile() {
     const {signOut, session} = useSession();

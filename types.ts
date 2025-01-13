@@ -40,19 +40,26 @@ export type UserType = {
     userinfo: any,
 }
 
-export type Activity = {
-    title_module: string;
-    codemodule: string;
+type BaseActivityType = {
     scolaryear: string;
+    codemodule: string;
     codeinstance: string;
+    codeacti: string;
+    title: string;
+    description: string;
+    begin: string;
+    end: string;
+};
+
+export type Activity = BaseActivityType & {
+    title_module: string;
     code_location: string;
     begin_event: string | null;
     end_event: string | null;
     seats: number | null;
     num_event: number | null;
     type_acti: string;
-    type_acti_code: string | "proj" | "class" | "rdv" | "other" | "tp" | "exam"
-    codeacti: string;
+    type_acti_code: string | "proj" | "class" | "rdv" | "other" | "tp" | "exam";
     acti_title: string;
     num: string;
     begin_acti: string;
@@ -95,24 +102,16 @@ type StudentRegisteredType = {
     registered: string;
 };
 
-export type ActivityExtendedType = {
-    scolaryear: string;
-    codemodule: string;
-    codeinstance: string;
-    codeacti: string;
+export type ActivityExtendedType = BaseActivityType & {
     call_ihk: string;
     slug: string | null;
     instance_location: string;
     module_title: string;
-    title: string;
-    description: string;
     type_title: string;
-    type_code: ActivityCode
-    begin: string;
+    type_code: ActivityCode;
     start: string;
     end_register: string | null;
     deadline: string | null;
-    end: string;
     nb_hours: string;
     nb_group: number;
     num: number;
@@ -170,3 +169,145 @@ export type MarksType = {
     modules: ModuleType[],
     notes: NotesType[]
 }
+
+export type ProjectType = BaseActivityType & {
+    call_ihk: string;
+    closed: boolean;
+    date_access: boolean;
+    deadline: string;
+    forum_path: string | null;
+    id_activite: string;
+    instance_allowed: string;
+    instance_location: string;
+    instance_registered: string;
+    is_rdv: boolean;
+    module_title: string;
+    nb_max: number;
+    nb_min: number;
+    nb_notes: number;
+    notregistered: {
+        course_code: string;
+        credits: number;
+        cycle: string;
+        date_ins: string;
+        flags: any;
+        grade: string;
+        location: string;
+        login: string;
+        picture: string;
+        promo: number;
+        semester: string;
+        title: string;
+    }[];
+    over: number;
+    over_deadline: number;
+    project_title: string;
+    register: boolean;
+    register_by_bloc: string;
+    register_prof: string;
+    registered: {
+        closed: boolean;
+        code: string;
+        final_note: string | null;
+        id: string;
+        master: {
+            date_ins: string;
+            date_modif: string | null;
+            login: string;
+            picture: string;
+            status: string;
+            title: string;
+        };
+        members: any;
+        repository: string;
+        title: string;
+    }[];
+    registered_instance: number;
+    root_slug: string;
+    slug: string;
+    type_code: string;
+    type_title: string;
+    urls: Array<{
+        notation: boolean;
+        title: string;
+        link: string;
+    }>;
+    user_project_code: string;
+    user_project_master: string;
+    user_project_status: string;
+    user_project_title: string;
+};
+
+export type AppointmentType = BaseActivityType & {
+    description: string;
+    events: {
+        begin: string;
+        date_ins: string | null;
+        date_modif: string | null;
+        end: string;
+        id: string;
+        location: string;
+        nb_registered: string;
+        num_event: string;
+        register: string;
+        title: string;
+    }[];
+    group: {
+        code: string;
+        id: number;
+        inscrit: boolean;
+        master: string;
+        members: any[];
+        title: string;
+    }[];
+    instance_location: string;
+    module_title: string;
+    nb_notes: number;
+    nb_registered: number;
+    nb_slots_full: number;
+    project: {
+        codeinstance: string;
+        codemodule: string;
+        id: number;
+        scolaryear: string;
+        title: string;
+    };
+    projects: {
+        codeacti: string;
+        id_projet: string | null;
+        title: string;
+    }[];
+    registe_by_bloc: boolean;
+    slots: {
+        bloc_status: "open" | "closed";
+        codeevent: string;
+        id: number;
+        room: string;
+        slots: {
+            acti_title: string;
+            bloc_status: "open" | "closed";
+            code: string | null;
+            date: string;
+            date_ins: string | null;
+            duration: number;
+            id: number;
+            id_team: string | null;
+            id_user: string | null;
+            master: {
+                login: string,
+                picture: string,
+                title: string,
+            } | null,
+            members: any[];
+            members_pictures: any[];
+            module_title: string;
+            past: number;
+            status: string;
+            title: string | null;
+        }[];
+        title: string;
+    }[];
+    student_registered: boolean;
+    title: string;
+    with_project: boolean;
+};

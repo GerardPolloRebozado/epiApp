@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { Activity, UserType } from "@/types";
 import useSession from "@/app/ctx";
 import { ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack } from "tamagui";
-import { fetchActivities, fetchUser } from "@/fetchData";
+import { fetchActivities, fetchUser } from "@/utils/fetchData";
 import { StyleSheet } from "react-native";
 import ActivityCard from "@/components/ActivityCard";
 import { registerBackgroundFetchAsync } from "@/backgroundTasks/fetchActivities";
-import { fakeActivities, fakeUser } from "@/fakeData";
+import { fakeActivities, fakeUser } from "@/utils/fakeData";
 
 export default function HomeScreen() {
     const { session } = useSession();

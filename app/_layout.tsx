@@ -42,5 +42,4 @@ export default function RootLayout() {
             </ThemeProvider>
         </TamaguiProvider>
     )
-
 }

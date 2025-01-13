@@ -4,8 +4,8 @@ async function fetchEpitech(url: string, session: string, method?: "GET" | "POST
     return await fetch(`https://intra.epitech.eu/${url}`, {
         method: method || 'GET',
         headers: {
-            'Authorization': `Bearer ${session}`, 'Cookie': `user=${session}`, 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-        }, credentials: 'omit'
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        }, credentials: 'include'
     });
 }
 

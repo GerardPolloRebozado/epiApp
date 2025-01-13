@@ -1,12 +1,13 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { fetchActivity, registerActivity } from "@/utils/fetchData";
+import { fetchActivity, fetchAppointments, registerActivity } from "@/utils/fetchData";
 import useSession from "@/app/ctx";
-import { ActivityExtendedType, ProjectType } from "@/types";
-import { Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack } from "tamagui";
-import { StyleSheet } from "react-native";
+import { ActivityExtendedType, AppointmentType, ProjectType } from "@/types";
+import { Accordion, Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack } from "tamagui";
 import transformHours from "@/utils/randomUtils";
+import { StyleSheet } from "react-native";
+import JWT from "expo-jwt";
 
 export default function Activity() {
     const { session } = useSession();
@@ -20,6 +21,7 @@ export default function Activity() {
     const [reload, setReload] = useState(false)
     const [registerLoad, setRegisterLoad] = useState(false)
     const [project, setProject] = useState<ProjectType | null>(null)
+    const [appointments, setAppointments] = useState<AppointmentType | null>(null)
     const router = useRouter()
 
     useEffect(() => {
@@ -48,6 +50,11 @@ export default function Activity() {
                         }
                         setRelatedActivities(tempRelActivitiesArray)
                     }
+                }
+                if (activityRes.type_code === 'rdv') {
+                    const appointmentsRes = await fetchAppointments({ session, year: local.year, module: local.module, city: local.city, activity: local.activity })
+                    const appointmentsBody = await appointmentsRes.json()
+                    setAppointments(appointmentsBody)
                 }
             } else {
                 router.push("/")
@@ -79,6 +86,19 @@ export default function Activity() {
         })
     }
 
+    function buttonRegisterAppointment(appointmentId: string, register: boolean) {
+        if (!session) {
+            return
+        }
+        setRegisterLoad(true)
+        registerActivity(session, local.year, local.module, local.city, local.activity, appointmentId, register).then((res) => {
+            if (res.ok) {
+                setReload(!reload)
+                setRegisterLoad(false)
+            }
+        })
+    }
+
     function openActivity(activ: ActivityExtendedType) {
         router.push(`/activity?year=${activ.scolaryear}&module=${activ.codemodule}&city=${activ.codeinstance}&activity=${activ.codeacti}`)
     }
@@ -96,7 +116,7 @@ export default function Activity() {
                         <Paragraph>{activity.description}</Paragraph>
                     </Card.Footer>
                 </Card>}
-                {relatedActivities && relatedActivities.length > 0 &&(
+                {relatedActivities && relatedActivities.length > 0 && (
                     <ScrollView>
                         <YStack style={styles.scrollView}>
                             <Paragraph>Related activities</Paragraph>
@@ -117,7 +137,7 @@ export default function Activity() {
                         </YStack>
                     </ScrollView>
                 )}
-                {activity.events.length > 0 && (
+                {!appointments && activity.events.length > 0 && (
                     <ScrollView>
                         <YStack style={styles.scrollView}>
                             <Paragraph>Events</Paragraph>
@@ -141,6 +161,39 @@ export default function Activity() {
                         </YStack>
                     </ScrollView>
                 )}
+                {appointments && (
+                    <>
+                        <Paragraph>Appointments</Paragraph>
+                        <ScrollView>
+                            <Accordion type={"single"} collapsible>
+                                {appointments.slots.map((slot) => {
+                                    return (
+                                        <YStack key={slot.id}>
+                                            <Accordion.Item value={slot.id.toString(10)}>
+                                                <Accordion.Trigger>
+                                                    <Paragraph>{slot.title.length > 0 ? slot.title : "Appointment slot"} - {slot.room}</Paragraph>
+                                                </Accordion.Trigger>
+                                                <Accordion.Content>
+                                                    {slot.slots.map(appointmentSlot => {
+                                                        return (<Card justifyContent={"center"} padded radiused elevate marginTop={"$2"} key={appointmentSlot.id} bordered>
+                                                            <Card.Header>
+                                                                <H6>{new Date(appointmentSlot.date).toLocaleString('en-US', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</H6>
+                                                            </Card.Header>
+                                                            <Card.Footer justifyContent={'center'} alignItems={'center'}>
+                                                                {appointmentSlot.master && appointmentSlot.master.login !== JWT.decode(session, null).login ? <Paragraph>Someone already registered</Paragraph> : appointmentSlot.master && appointmentSlot.master.login === JWT.decode(session, null).login ? <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), false)}>Unregister</Button> : <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), true)}>Register</Button>}
+                                                            </Card.Footer>
+                                                        </Card>)
+                                                    })}
+                                                </Accordion.Content>
+                                            </Accordion.Item>
+                                        </YStack>
+                                    )
+                                })}
+                            </Accordion>
+                        </ScrollView>
+                    </>
+                )
+                }
             </YStack>
         </SafeAreaView>
     )
@@ -154,6 +207,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         alignItems: 'center',
-        gap: '$2'
+        gap: '$2',
+        maxHeight: 300
     }
 });

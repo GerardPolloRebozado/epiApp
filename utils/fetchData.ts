@@ -49,3 +49,11 @@ export async function registerActivity(session: string, year: string, module: st
 export async function fetchMarks(session: string) {
     return await fetchEpitech(`user/${JWT.decode(session, null).login}/notes?format=json`, session)
 }
+
+export async function fetchAppointments({session, year, module, city, activity}: { session: string, year: string, module: string, city: string, activity: string }) {
+    return await fetchEpitech(`module/${year}/${module}/${city}/${activity}/rdv?format=json`, session)
+}
+
+export async function registerAppointment({session, year, module, city, activity, register}: { session: string, year: string, module: string, city: string, activity: string, register: boolean }) {
+    return await fetchEpitech(`module/${year}/${module}/${city}/${activity}/rdv/${register ? "register" : "unregister"}?format=json`, session, 'POST')
+}

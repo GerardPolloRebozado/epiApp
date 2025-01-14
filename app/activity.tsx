@@ -1,8 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
+import { Redirect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { fetchActivity, fetchAppointments, registerActivity } from "@/utils/fetchData";
-import useSession from "@/app/ctx";
+import useSession from "@/hooks/ctx";
 import { ActivityExtendedType, AppointmentType, ProjectType } from "@/types";
 import { Accordion, Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack } from "tamagui";
 import transformHours from "@/utils/randomUtils";
@@ -19,16 +19,21 @@ export default function Activity() {
     const [activity, setActivity] = useState<ActivityExtendedType | null>(null);
     const [relatedActivities, setRelatedActivities] = useState<ActivityExtendedType[] | null>(null);
     const [reload, setReload] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [registerLoad, setRegisterLoad] = useState(false)
     const [project, setProject] = useState<ProjectType | null>(null)
     const [appointments, setAppointments] = useState<AppointmentType | null>(null)
     const router = useRouter()
+    const navigation = useNavigation();
+
+    navigation.setOptions({ title: project ? project.title : activity?.title || 'Activity'});
 
     useEffect(() => {
         async function getActivity() {
             if (!session) {
                 return
             }
+            setIsLoading(true)
             const res = await fetchActivity(session, local.year, local.module, local.city, local.activity);
             if (res.ok) {
                 const activityRes: ActivityExtendedType = await res.json()
@@ -56,6 +61,7 @@ export default function Activity() {
                     const appointmentsBody = await appointmentsRes.json()
                     setAppointments(appointmentsBody)
                 }
+                setIsLoading(false)
             } else {
                 router.push("/")
             }
@@ -63,9 +69,9 @@ export default function Activity() {
 
         getActivity()
     }, [reload])
-    if (!activity) {
+    if (isLoading || !activity) {
         return <Spinner size={"large"}/>
-    } else {
+    } else if (activity) {
         activity.events.forEach(event => {
             if (event.already_register != null) {
                 registered = true
@@ -106,7 +112,6 @@ export default function Activity() {
     return (
         <SafeAreaView style={styles.container}>
             <YStack width={"95vw"} gap={"$2"} justifyContent={"center"} alignItems={"center"}>
-                <H6>{project ? project.title : activity.title}</H6>
                 {activity.description && <Card radiused padded bordered backgrounded marginVertical={"$6"} borderWidth={"$1.5"}>
                     <Card.Header>
                         <H6>Activity description</H6>

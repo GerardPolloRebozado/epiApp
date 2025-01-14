@@ -1,11 +1,14 @@
-import useSession from "@/app/ctx";
-import { Redirect } from "expo-router";
+import useSession from "@/hooks/ctx";
+import { Redirect, useNavigation } from "expo-router";
 import CookieManager from '@react-native-cookies/cookies';
 import WebView from "react-native-webview";
 import { useEffect } from "react";
 
 export default function Auth() {
     const {session, signIn} = useSession();
+    const navigation = useNavigation();
+
+    navigation.setOptions({ title: 'Please login the intranet' });
     if (session) {
         return <Redirect href={'/'}/>;
     }
@@ -18,7 +21,7 @@ export default function Auth() {
                 clearInterval(interval);
                 signIn(cookies.user.value);
             }
-        }, 1000);
+        }, 1500);
 
         return () => clearInterval(interval);
     }, []);

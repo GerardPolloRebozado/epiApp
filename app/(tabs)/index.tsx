@@ -1,13 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import { Activity, UserType } from "@/types";
-import useSession from "@/app/ctx";
+import useSession from "@/hooks/ctx";
 import { ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack } from "tamagui";
 import { fetchActivities, fetchUser } from "@/utils/fetchData";
 import { StyleSheet } from "react-native";
 import ActivityCard from "@/components/ActivityCard";
 import { registerBackgroundFetchAsync } from "@/backgroundTasks/fetchActivities";
 import { fakeActivities, fakeUser } from "@/utils/fakeData";
+import * as Notifications from "expo-notifications";
 
 export default function HomeScreen() {
     const { session } = useSession();
@@ -41,6 +42,15 @@ export default function HomeScreen() {
 
         fetchData();
     }, [session])
+
+    useEffect(() => {
+        (async () => {
+            const { status } = await Notifications.getPermissionsAsync();
+            if (status !== 'granted') {
+                await Notifications.requestPermissionsAsync();
+            }
+        })();
+    }, []);
 
     if (!user || !Array.isArray(activityList)) {
         return (<SafeAreaView style={styles.container}>

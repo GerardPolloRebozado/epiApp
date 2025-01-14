@@ -1,5 +1,5 @@
 import { RefreshControl, StyleSheet } from 'react-native';
-import useSession from "@/app/ctx";
+import useSession from "@/hooks/ctx";
 import { useEffect, useState } from "react";
 import { MarksType, NotesType, UserType } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import { fetchImage, fetchMarks, fetchUser } from "@/utils/fetchData";
 import { Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { Settings } from "@tamagui/lucide-icons";
 import { fakeMarks, fakeUser } from "@/utils/fakeData";
+import { useRouter } from "expo-router";
 
 export default function Profile() {
     const {signOut, session} = useSession();
@@ -15,6 +16,7 @@ export default function Profile() {
     const [user, setUser] = useState<UserType | null>(null);
     const [image, setImage] = useState<string>("error");
     const [marks, setMarks] = useState<MarksType | null>(null)
+    const router = useRouter();
 
     useEffect(() => {
         async function getData() {
@@ -75,7 +77,7 @@ export default function Profile() {
 
     return (<SafeAreaView style={styles.container}>
         <XStack justifyContent={"flex-end"} alignItems={"flex-end"} width={"100%"}>
-            <Settings/>
+            <Settings onPress={() => router.push('/settings')}/>
         </XStack>
         <Card bordered padded>
             <Card.Footer alignItems={"center"} gap={"$3"}>

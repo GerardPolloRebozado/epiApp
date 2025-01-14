@@ -1,14 +1,13 @@
 import { Tabs } from 'expo-router';
 import 'react-native-reanimated';
 import React from 'react';
-import { Text} from 'react-native';
+import { Text, useColorScheme } from 'react-native';
 import { Redirect } from 'expo-router';
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-import useSession from "@/app/ctx";
+import useSession from "@/hooks/ctx";
 import {AntDesign} from "@expo/vector-icons";
 
 export default function TabLayout() {

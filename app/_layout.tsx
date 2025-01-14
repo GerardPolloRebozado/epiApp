@@ -7,14 +7,15 @@ import { TamaguiProvider } from "tamagui";
 import { config } from "@/tamagui.config";
 import 'react-native-reanimated'
 import { StatusBar } from "expo-status-bar";
-import { SettingsProvider } from "@/hooks/settings";
-import { useColorScheme } from "react-native";
+import useSettings, { SettingsProvider } from "@/hooks/settings";
+import { Appearance, ColorSchemeName, useColorScheme } from "react-native";
 import { SessionProvider } from "@/hooks/ctx";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-    const colorScheme = useColorScheme();
+    const settings = useSettings();
+    let colorScheme = useColorScheme()
     const [loaded] = useFonts({
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
@@ -28,6 +29,12 @@ export default function RootLayout() {
     if (!loaded) {
         return null;
     }
+
+    settings.theme.getItem().then(theme => {
+        if (theme && theme !== 'system' && theme as ColorSchemeName !== colorScheme) {
+            Appearance.setColorScheme(theme as ColorSchemeName);
+        }
+    });
 
     return (
         <TamaguiProvider config={config} defaultTheme={colorScheme!}>

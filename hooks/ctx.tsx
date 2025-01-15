@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react';
-import { useStorageState } from './useStorageState';
+import { useStorageState } from '@/app/useStorageState';
 
 const AuthContext = createContext<{
     signIn: (token: string) => void;
@@ -13,13 +13,7 @@ const AuthContext = createContext<{
     isLoading: false,
 });
 export default function useSession() {
-    const value = useContext(AuthContext);
-    if (process.env.NODE_ENV !== 'production') {
-        if (!value) {
-            throw new Error('useSession must be wrapped in a <SessionProvider />');
-        }
-    }
-    return value;
+    return useContext(AuthContext);
 }
 
 export function SessionProvider({ children }: React.PropsWithChildren<{}>) {

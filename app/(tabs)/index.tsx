@@ -1,18 +1,21 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect, useState } from "react";
-import { Activity, UserType } from "@/types";
-import useSession from "@/app/ctx";
-import { ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack } from "tamagui";
-import { fetchActivities, fetchUser } from "@/utils/fetchData";
-import { StyleSheet } from "react-native";
+import {SafeAreaView} from "react-native-safe-area-context";
+import {useEffect, useState} from "react";
+import {Activity, UserType} from "@/types";
+import useSession from "@/hooks/ctx";
+import {ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack} from "tamagui";
+import {fetchActivities, fetchUser} from "@/utils/fetchData";
+import {StyleSheet} from "react-native";
 import ActivityCard from "@/components/ActivityCard";
-import { registerBackgroundFetchAsync } from "@/backgroundTasks/fetchActivities";
-import { fakeActivities, fakeUser } from "@/utils/fakeData";
+import {registerBackgroundFetchAsync} from "@/backgroundTasks/fetchActivities";
+import {fakeActivities, fakeUser} from "@/utils/fakeData";
+import * as Notifications from "expo-notifications";
+import {Redirect, useRouter} from "expo-router";
 
 export default function HomeScreen() {
-    const { session } = useSession();
+    const {session, signOut} = useSession();
     const [user, setUser] = useState<UserType | null>(null);
     const [activityList, setActivityList] = useState<Activity[] | null>(null);
+    const router = useRouter()
     registerBackgroundFetchAsync()
 
     useEffect(() => {
@@ -37,10 +40,25 @@ export default function HomeScreen() {
                 const activityBody = await activityResponse.json();
                 setActivityList(activityBody);
             }
+            if (userResponse.status === 503 || activityResponse.status === 503) {
+                signOut()
+                router.push('/auth')
+            }
         }
 
         fetchData();
     }, [session])
+
+    useEffect(() => {
+        setTimeout(() => {
+            (async () => {
+                const {status} = await Notifications.getPermissionsAsync();
+                if (status !== 'granted') {
+                    await Notifications.requestPermissionsAsync();
+                }
+            })();
+        }, 1000);
+    }, []);
 
     if (!user || !Array.isArray(activityList)) {
         return (<SafeAreaView style={styles.container}>
@@ -51,7 +69,7 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <Text fontSize={"$6"}>Welcome, {user?.title}</Text>
-            <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={"70%"} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"}>
+            <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={"70%"} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} marginHorizontal={"$2"}>
                 <Tabs.List marginBottom={"$4"}>
                     <Tabs.Tab value={"activity"}>
                         <SizableText>Activities</SizableText>

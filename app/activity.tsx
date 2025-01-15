@@ -1,16 +1,16 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { fetchActivity, fetchAppointments, registerActivity } from "@/utils/fetchData";
-import useSession from "@/app/ctx";
-import { ActivityExtendedType, AppointmentType, ProjectType } from "@/types";
-import { Accordion, Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack } from "tamagui";
+import {SafeAreaView} from "react-native-safe-area-context";
+import {Redirect, useLocalSearchParams, useNavigation, useRouter} from "expo-router";
+import {useEffect, useState} from "react";
+import {fetchActivity, fetchAppointments, registerActivity} from "@/utils/fetchData";
+import useSession from "@/hooks/ctx";
+import {ActivityExtendedType, AppointmentType, ProjectType} from "@/types";
+import {Accordion, Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack} from "tamagui";
 import transformHours from "@/utils/randomUtils";
-import { StyleSheet } from "react-native";
+import {StyleSheet} from "react-native";
 import JWT from "expo-jwt";
 
 export default function Activity() {
-    const { session } = useSession();
+    const {session} = useSession();
     let registered = false
     if (!session) {
         return <Redirect href={"/auth"}/>
@@ -19,16 +19,25 @@ export default function Activity() {
     const [activity, setActivity] = useState<ActivityExtendedType | null>(null);
     const [relatedActivities, setRelatedActivities] = useState<ActivityExtendedType[] | null>(null);
     const [reload, setReload] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [registerLoad, setRegisterLoad] = useState(false)
     const [project, setProject] = useState<ProjectType | null>(null)
     const [appointments, setAppointments] = useState<AppointmentType | null>(null)
     const router = useRouter()
+    const navigation = useNavigation();
+
+    if (!isLoading) {
+        navigation.setOptions({title: project ? project.title : activity?.title || 'Activity'});
+    } else {
+        navigation.setOptions({title: 'Activity'});
+    }
 
     useEffect(() => {
         async function getActivity() {
             if (!session) {
                 return
             }
+            setIsLoading(true)
             const res = await fetchActivity(session, local.year, local.module, local.city, local.activity);
             if (res.ok) {
                 const activityRes: ActivityExtendedType = await res.json()
@@ -52,10 +61,11 @@ export default function Activity() {
                     }
                 }
                 if (activityRes.type_code === 'rdv') {
-                    const appointmentsRes = await fetchAppointments({ session, year: local.year, module: local.module, city: local.city, activity: local.activity })
+                    const appointmentsRes = await fetchAppointments({session, year: local.year, module: local.module, city: local.city, activity: local.activity})
                     const appointmentsBody = await appointmentsRes.json()
                     setAppointments(appointmentsBody)
                 }
+                setIsLoading(false)
             } else {
                 router.push("/")
             }
@@ -63,9 +73,9 @@ export default function Activity() {
 
         getActivity()
     }, [reload])
-    if (!activity) {
+    if (isLoading || !activity) {
         return <Spinner size={"large"}/>
-    } else {
+    } else if (activity) {
         activity.events.forEach(event => {
             if (event.already_register != null) {
                 registered = true
@@ -106,7 +116,6 @@ export default function Activity() {
     return (
         <SafeAreaView style={styles.container}>
             <YStack width={"95vw"} gap={"$2"} justifyContent={"center"} alignItems={"center"}>
-                <H6>{project ? project.title : activity.title}</H6>
                 {activity.description && <Card radiused padded bordered backgrounded marginVertical={"$6"} borderWidth={"$1.5"}>
                     <Card.Header>
                         <H6>Activity description</H6>
@@ -177,7 +186,7 @@ export default function Activity() {
                                                     {slot.slots.map(appointmentSlot => {
                                                         return (<Card justifyContent={"center"} padded radiused elevate marginTop={"$2"} key={appointmentSlot.id} bordered>
                                                             <Card.Header>
-                                                                <H6>{new Date(appointmentSlot.date).toLocaleString('en-US', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</H6>
+                                                                <H6>{new Date(appointmentSlot.date).toLocaleString('en-US', {weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'})}</H6>
                                                             </Card.Header>
                                                             <Card.Footer justifyContent={'center'} alignItems={'center'}>
                                                                 {appointmentSlot.master && appointmentSlot.master.login !== JWT.decode(session, null).login ? <Paragraph>Someone already registered</Paragraph> : appointmentSlot.master && appointmentSlot.master.login === JWT.decode(session, null).login ? <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), false)}>Unregister</Button> : <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), true)}>Register</Button>}

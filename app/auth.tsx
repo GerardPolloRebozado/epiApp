@@ -21,9 +21,7 @@ export default function Auth() {
                 clearInterval(interval);
                 signIn(cookies.user.value);
             }
-        }, 1500);
-
-        return () => clearInterval(interval);
+        }, 4000);
     }, []);
 
     return (

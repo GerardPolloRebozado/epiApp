@@ -1,15 +1,15 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {useFonts} from 'expo-font';
+import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import { TamaguiProvider } from "tamagui";
-import { config } from "@/tamagui.config";
+import {useEffect} from 'react';
+import {TamaguiProvider} from "tamagui";
+import {config} from "@/tamagui.config";
 import 'react-native-reanimated'
-import { StatusBar } from "expo-status-bar";
-import useSettings, { SettingsProvider } from "@/hooks/settings";
-import { Appearance, ColorSchemeName, useColorScheme } from "react-native";
-import { SessionProvider } from "@/hooks/ctx";
+import {StatusBar} from "expo-status-bar";
+import useSettings, {SettingsProvider} from "@/hooks/settings";
+import {Appearance, ColorSchemeName, StyleSheet, useColorScheme, View} from "react-native";
+import {SessionProvider} from "@/hooks/ctx";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,7 +35,6 @@ export default function RootLayout() {
             Appearance.setColorScheme(theme as ColorSchemeName);
         }
     });
-
     return (
         <TamaguiProvider config={config} defaultTheme={colorScheme!}>
             <ThemeProvider
@@ -43,10 +42,10 @@ export default function RootLayout() {
                 <SessionProvider>
                     <SettingsProvider>
                         <StatusBar style="auto"/>
-                        <Stack>
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false }}/>
-                            <Stack.Screen name="+not-found"/>
-                        </Stack>
+                            <Stack>
+                                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                                <Stack.Screen name="+not-found"/>
+                            </Stack>
                     </SettingsProvider>
                 </SessionProvider>
             </ThemeProvider>

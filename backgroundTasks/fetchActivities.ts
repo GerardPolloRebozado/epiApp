@@ -5,9 +5,13 @@ import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import { fetchActivities } from "@/utils/fetchData";
 import { Activity } from "@/types";
 import { getLargeItemAsync } from "@/app/useStorageState";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
     const session = await getLargeItemAsync('session')
+    const notificationTimeStorage = await AsyncStorage.getItem('notificationTime')
+    const notificationTimeConverted = notificationTimeStorage ? parseInt(notificationTimeStorage) : 5
+
     if (typeof session !== 'string')
         return
     const res = await fetchActivities(session)
@@ -34,7 +38,7 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
                 },
                 trigger: {
                     type: SchedulableTriggerInputTypes.DATE,
-                    date: new Date(new Date(activity.begin_event).getTime() - 5 * 60 * 1000)
+                    date: new Date(new Date(activity.begin_event).getTime() - notificationTimeConverted * 60 * 1000)
                 }
             })
         }

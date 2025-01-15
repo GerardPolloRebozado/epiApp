@@ -1,16 +1,16 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Redirect, useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { fetchActivity, fetchAppointments, registerActivity } from "@/utils/fetchData";
+import {SafeAreaView} from "react-native-safe-area-context";
+import {Redirect, useLocalSearchParams, useNavigation, useRouter} from "expo-router";
+import {useEffect, useState} from "react";
+import {fetchActivity, fetchAppointments, registerActivity} from "@/utils/fetchData";
 import useSession from "@/hooks/ctx";
-import { ActivityExtendedType, AppointmentType, ProjectType } from "@/types";
-import { Accordion, Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack } from "tamagui";
+import {ActivityExtendedType, AppointmentType, ProjectType} from "@/types";
+import {Accordion, Button, Card, H6, Paragraph, ScrollView, Separator, Spinner, XStack, YStack} from "tamagui";
 import transformHours from "@/utils/randomUtils";
-import { StyleSheet } from "react-native";
+import {StyleSheet} from "react-native";
 import JWT from "expo-jwt";
 
 export default function Activity() {
-    const { session } = useSession();
+    const {session} = useSession();
     let registered = false
     if (!session) {
         return <Redirect href={"/auth"}/>
@@ -26,7 +26,11 @@ export default function Activity() {
     const router = useRouter()
     const navigation = useNavigation();
 
-    navigation.setOptions({ title: project ? project.title : activity?.title || 'Activity'});
+    if (!isLoading) {
+        navigation.setOptions({title: project ? project.title : activity?.title || 'Activity'});
+    } else {
+        navigation.setOptions({title: 'Activity'});
+    }
 
     useEffect(() => {
         async function getActivity() {
@@ -57,7 +61,7 @@ export default function Activity() {
                     }
                 }
                 if (activityRes.type_code === 'rdv') {
-                    const appointmentsRes = await fetchAppointments({ session, year: local.year, module: local.module, city: local.city, activity: local.activity })
+                    const appointmentsRes = await fetchAppointments({session, year: local.year, module: local.module, city: local.city, activity: local.activity})
                     const appointmentsBody = await appointmentsRes.json()
                     setAppointments(appointmentsBody)
                 }
@@ -182,7 +186,7 @@ export default function Activity() {
                                                     {slot.slots.map(appointmentSlot => {
                                                         return (<Card justifyContent={"center"} padded radiused elevate marginTop={"$2"} key={appointmentSlot.id} bordered>
                                                             <Card.Header>
-                                                                <H6>{new Date(appointmentSlot.date).toLocaleString('en-US', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</H6>
+                                                                <H6>{new Date(appointmentSlot.date).toLocaleString('en-US', {weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'})}</H6>
                                                             </Card.Header>
                                                             <Card.Footer justifyContent={'center'} alignItems={'center'}>
                                                                 {appointmentSlot.master && appointmentSlot.master.login !== JWT.decode(session, null).login ? <Paragraph>Someone already registered</Paragraph> : appointmentSlot.master && appointmentSlot.master.login === JWT.decode(session, null).login ? <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), false)}>Unregister</Button> : <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), true)}>Register</Button>}

@@ -2,23 +2,28 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {useEffect, useState} from "react";
 import {Activity, UserType} from "@/types";
 import useSession from "@/hooks/ctx";
-import {ScrollView, Separator, SizableText, Spinner, Tabs, Text, YStack} from "tamagui";
+import {Button, ScrollView, SizableText, Spinner, Tabs, Text, YStack} from "tamagui";
 import {fetchActivities, fetchUser} from "@/utils/fetchData";
 import {StyleSheet} from "react-native";
 import ActivityCard from "@/components/ActivityCard";
 import {registerBackgroundFetchAsync} from "@/backgroundTasks/fetchActivities";
 import {fakeActivities, fakeUser} from "@/utils/fakeData";
 import * as Notifications from "expo-notifications";
-import {Redirect, useRouter} from "expo-router";
+import {useRouter} from "expo-router";
+import {ChevronLeft, ChevronRight} from "@tamagui/lucide-icons";
 
 export default function HomeScreen() {
     const {session, signOut} = useSession();
     const [user, setUser] = useState<UserType | null>(null);
+    const [week, setWeek] = useState<number>(0);
     const [activityList, setActivityList] = useState<Activity[] | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
     const router = useRouter()
     registerBackgroundFetchAsync()
 
     useEffect(() => {
+        setIsLoading(true);
+
         async function fetchData() {
             if (!session) return;
             if (session === 'guest') {
@@ -33,7 +38,7 @@ export default function HomeScreen() {
                 const userBody = await userResponse.json();
                 setUser(userBody);
             }
-            const activityResponse = await fetchActivities(session)
+            const activityResponse = await fetchActivities(session, week)
             if (!activityResponse.ok) {
                 console.error('Fetch error:', activityResponse);
             } else {
@@ -44,10 +49,11 @@ export default function HomeScreen() {
                 signOut()
                 router.push('/auth')
             }
+            setIsLoading(false);
         }
 
         fetchData();
-    }, [session])
+    }, [session, week])
 
     useEffect(() => {
         setTimeout(() => {
@@ -71,32 +77,40 @@ export default function HomeScreen() {
             <Text fontSize={"$6"}>Welcome, {user?.title}</Text>
             <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={"70%"} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} marginHorizontal={"$2"}>
                 <Tabs.List marginBottom={"$4"}>
+                    <Button iconAfter={<ChevronLeft/>} variant={"outlined"} marginRight={'-4'} borderBottomRightRadius={'0'} borderTopRightRadius={'0'} onPress={() => setWeek(week - 1)}/>
                     <Tabs.Tab value={"activity"}>
                         <SizableText>Activities</SizableText>
                     </Tabs.Tab>
                     <Tabs.Tab value={"project"}>
                         <SizableText>Projects</SizableText>
                     </Tabs.Tab>
+                    <Button iconAfter={<ChevronRight/>} variant={"outlined"} marginRight={'-4'} borderBottomLeftRadius={'0'} borderTopLeftRadius={'0'} onPress={() => setWeek(week + 1)}/>
                 </Tabs.List>
-                <Separator vertical={true}/>
-                <Tabs.Content value={"activity"}>
-                    <ScrollView>
-                        <YStack gap={"$4"}>
-                            {activityList.map((activity) => (
-                                <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"activity"}/>
-                            ))}
-                        </YStack>
-                    </ScrollView>
-                </Tabs.Content>
-                <Tabs.Content value={"project"}>
-                    <ScrollView>
-                        <YStack gap={"$4"}>
-                            {activityList.map((activity) => (
-                                <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"project"}/>
-                            ))}
-                        </YStack>
-                    </ScrollView>
-                </Tabs.Content>
+                {!isLoading ? (
+                    <>
+                        <Tabs.Content value={"activity"}>
+                            <ScrollView>
+                                <YStack gap={"$4"}>
+                                    {activityList.map((activity) => (
+                                        <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"activity"}/>
+                                    ))}
+                                    {activityList.length === 0 && <Text>No activities this week</Text>}
+                                </YStack>
+                            </ScrollView>
+                        </Tabs.Content>
+                        <Tabs.Content value={"project"}>
+                            <ScrollView>
+                                <YStack gap={"$4"}>
+                                    {activityList.map((activity) => (
+                                        <ActivityCard activity={activity} key={activity.codeacti + activity.begin_event} type={"project"}/>
+                                    ))}
+                                </YStack>
+                            </ScrollView>
+                        </Tabs.Content>
+                    </>
+                ) : (
+                    <Spinner size="large"/>
+                )}
             </Tabs>
         </SafeAreaView>
     );

@@ -41,6 +41,10 @@ export const fakeUser: UserType = {
 
 export const fakeActivities: Activity[] = [
     {
+        "title": "G0 - PC Development",
+        "description": "Personal Development",
+        "begin": "2024-09-04 00:00:00",
+        "end": "2025-06-29 00:00:00",
         "title_module": "G0 - PC Development",
         "codemodule": "G-PCP-000",
         "scolaryear": "2024",
@@ -65,6 +69,10 @@ export const fakeActivities: Activity[] = [
         ]
     },
     {
+        "title": "G1 - C Graphical Programming",
+        "description": "Graphical programming project",
+        "begin": "2024-11-30 08:42:00",
+        "end": "2025-01-10 19:42:00",
         "title_module": "G1 - C Graphical Programming",
         "codemodule": "B-MUL-100",
         "scolaryear": "2024",
@@ -89,6 +97,10 @@ export const fakeActivities: Activity[] = [
         ]
     },
     {
+        "title": "G1 - C Graphical ",
+        "description": "Graphical pr",
+        "begin": "2024-11-30 08:42:00",
+        "end": "2025-01-10 19:42:00",
         "title_module": "G1 - Elementary Programming in C",
         "codemodule": "B-CPE-110",
         "scolaryear": "2024",

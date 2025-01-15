@@ -15,32 +15,77 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
     if (typeof session !== 'string')
         return
     const res = await fetchActivities(session)
+    const res2 = await fetchActivities(session, 1)
     if (!res.ok){
         console.error('Fetch error:', res)
         return
     }
     const activities: Activity[] = await res.json()
+    const activities2: Activity[] = await res2.json()
+    activities.push(...activities2)
     const notifications = await Notifications.getAllScheduledNotificationsAsync();
     activities.forEach(activity => {
         if (!activity.begin_event) {
-            return
+            return;
         }
-        if (new Date(activity.begin_event).getTime() - new Date().getTime() < 0) {
-            return
+        const currentTime = new Date().getTime();
+        const activityTime = new Date(activity.begin_event).getTime();
+        if (activityTime - currentTime < 0) {
+            return;
         }
-        const notif = notifications.find(n => n.content.data.activity === activity.acti_title)
-        if (!notif) {
+
+        if (activity.registered === 0 && activityTime - currentTime > 24 * 60 * 60 * 1000) {
+            const reminderNotifId = `register_${activity.acti_title}`;
+            const existingReminder = notifications.find(n => n.content.data.notifId === reminderNotifId);
+            if (!existingReminder) {
+                Notifications.scheduleNotificationAsync({
+                    content: {
+                        title: 'Registration Reminder',
+                        body: `Don't forget to register for: ${activity.acti_title}`,
+                        data: {
+                            notifId: reminderNotifId,
+                            type: 'registration_reminder',
+                            route: 'activity',
+                            params: {
+                                scolaryear: activity.scolaryear,
+                                codemodule: activity.codemodule,
+                                codeinstance: activity.codeinstance,
+                                codeacti: activity.codeacti
+                            }
+                        }
+                    },
+                    trigger: {
+                        type: SchedulableTriggerInputTypes.DATE,
+                        date: new Date(activityTime - (2 * 24 * 60 * 60 * 1000))
+                    }
+                });
+            }
+        }
+
+        const startNotifId = `start_${activity.acti_title}`;
+        const existingStartNotif = notifications.find(n => n.content.data.notifId === startNotifId);
+        if (!existingStartNotif) {
             Notifications.scheduleNotificationAsync({
                 content: {
                     title: 'Activity starting soon',
                     body: activity.acti_title,
-                    data: {activity: activity.acti_title}
+                    data: {
+                        notifId: startNotifId,
+                        type: 'activity_start',
+                        route: 'activity',
+                        params: {
+                            scolaryear: activity.scolaryear,
+                            codemodule: activity.codemodule,
+                            codeinstance: activity.codeinstance,
+                            codeacti: activity.codeacti
+                        }
+                    }
                 },
                 trigger: {
                     type: SchedulableTriggerInputTypes.DATE,
-                    date: new Date(new Date(activity.begin_event).getTime() - notificationTimeConverted * 60 * 1000)
+                    date: new Date(activityTime - notificationTimeConverted * 60 * 1000)
                 }
-            })
+            });
         }
     })
 })

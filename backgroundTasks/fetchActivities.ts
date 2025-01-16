@@ -14,15 +14,15 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
 
     if (typeof session !== 'string')
         return
-    const res = await fetchActivities(session)
-    const res2 = await fetchActivities(session, 1)
-    if (!res.ok){
-        console.error('Fetch error:', res)
+
+    const response = await fetchActivities(session, 2)
+
+    if (!response.ok) {
+        console.error('Fetch error:', response)
         return
     }
-    const activities: Activity[] = await res.json()
-    const activities2: Activity[] = await res2.json()
-    activities.push(...activities2)
+
+    const activities: Activity[] = await response.json()
     const notifications = await Notifications.getAllScheduledNotificationsAsync();
     activities.forEach(activity => {
         if (!activity.begin_event) {
@@ -92,7 +92,7 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
 
 export async function registerBackgroundFetchAsync() {
     return BackgroundFetch.registerTaskAsync('BACKGROUND-FETCH-ACTIVITIES', {
-        minimumInterval: 15 * 60 , // 15 minutes
+        minimumInterval: 3 * 60 * 60, // 3 hours
         stopOnTerminate: false,
         startOnBoot: true,
     });

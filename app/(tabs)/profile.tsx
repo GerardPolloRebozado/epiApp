@@ -76,7 +76,7 @@ export default function Profile() {
     }
 
     return (<SafeAreaView style={styles.container}>
-        <XStack justifyContent={"flex-end"} alignItems={"flex-end"} width={"100%"}>
+        <XStack justifyContent={"flex-end"} alignItems={"flex-end"} width={"100%"} marginTop={"$2"} marginRight={"$1"}>
             <Settings onPress={() => router.push('/settings')}/>
         </XStack>
         <Card bordered padded>

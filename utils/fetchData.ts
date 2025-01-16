@@ -1,4 +1,5 @@
 import JWT from "expo-jwt";
+import { weekCalculator } from './randomUtils';
 
 async function fetchEpitech(url: string, session: string, method?: "GET" | "POST" | "PUT" | "DELETE") {
     return await fetch(`https://intra.epitech.eu/${url}`, {
@@ -30,14 +31,7 @@ export async function fetchImage(session: string): Promise<string> {
 }
 
 export async function fetchActivities(session: string, week?: number) {
-    let date = new Date()
-    date.setDate(date.getDate() - date.getDay() + (date.getDay() === 0 ? -6 : 1))
-    if (week && week !== 0) {
-        date.setDate(date.getDate() + (week * 7))
-    }
-    const start = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-    date.setDate(date.getDate() + 6)
-    const end = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+    const { start, end } = weekCalculator(week);
     return await fetchEpitech(`module/board?format=json&start=${start}&end=${end}`, session)
 }
 

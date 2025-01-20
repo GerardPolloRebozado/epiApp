@@ -61,7 +61,7 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
                 });
             }
         }
-
+        if (activity.registered === 1) {
         const startNotifId = `start_${activity.acti_title}`;
         const existingStartNotif = notifications.find(n => n.content.data.notifId === startNotifId);
         if (!existingStartNotif) {
@@ -87,6 +87,7 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
                 }
             });
         }
+    }
     })
 })
 

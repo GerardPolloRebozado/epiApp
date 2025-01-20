@@ -82,16 +82,16 @@ export default function HomeScreen() {
             <Tabs defaultValue={"activity"} bottom={0} position={"absolute"} height={"70%"} orientation={"horizontal"} flexDirection={"column"} alignItems={"center"} marginHorizontal={"$2"}>
                 <Tabs.List marginBottom={"$4"}>
                     <YStack justifyContent={'center'} alignItems={'center'}>
-                        <ListItem textAlign="center" width="$20">{weekText}</ListItem>
+                        <ListItem textAlign="center" radiused borderBottomRightRadius={'0'} borderBottomLeftRadius={'0'} marginBottom={'-1'}>{weekText}</ListItem>
                         <XStack>
-                            <Button iconAfter={<ChevronLeft />} variant={"outlined"} marginRight={'-4'} borderBottomRightRadius={'0'} borderTopRightRadius={'0'} onPress={() => setWeek(week - 1)} />
-                            <Tabs.Tab value={"activity"}>
+                            <Button iconAfter={<ChevronLeft />} variant={"outlined"} borderBottomRightRadius={'0'} borderTopRightRadius={'0'} borderTopLeftRadius={'0'} onPress={() => setWeek(week - 1)} />
+                            <Tabs.Tab value={"activity"} borderRadius={'0'}>
                                 <SizableText>Activities</SizableText>
                             </Tabs.Tab>
-                            <Tabs.Tab value={"project"}>
+                            <Tabs.Tab value={"project"} borderRadius={'0'}>
                                 <SizableText>Projects</SizableText>
                             </Tabs.Tab>
-                            <Button iconAfter={<ChevronRight />} variant={"outlined"} marginRight={'-4'} borderBottomLeftRadius={'0'} borderTopLeftRadius={'0'} onPress={() => setWeek(week + 1)} />
+                            <Button iconAfter={<ChevronRight />} variant={"outlined"} borderBottomLeftRadius={'0'} borderTopLeftRadius={'0'} borderTopRightRadius={'0'} onPress={() => setWeek(week + 1)} />
                         </XStack>
                     </YStack>
                 </Tabs.List>

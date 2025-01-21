@@ -54,3 +54,7 @@ export async function fetchAppointments({session, year, module, city, activity}:
 export async function registerAppointment({session, year, module, city, activity, register}: { session: string, year: string, module: string, city: string, activity: string, register: boolean }) {
     return await fetchEpitech(`module/${year}/${module}/${city}/${activity}/rdv/${register ? "register" : "unregister"}?format=json`, session, 'POST')
 }
+
+export async function fetchtLogtime({session}: { session: string }) {
+    return await fetchEpitech(`user/${JWT.decode(session, null).login}/netsoul?format=json`, session)
+}

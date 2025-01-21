@@ -23,7 +23,6 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
     }
 
     const activities: Activity[] = await response.json()
-    const notifications = await Notifications.getAllScheduledNotificationsAsync();
     activities.forEach(activity => {
         if (!activity.begin_event) {
             return;
@@ -36,35 +35,33 @@ TaskManager.defineTask('BACKGROUND-FETCH-ACTIVITIES', async () => {
 
         if (activity.registered === 0 && activityTime - currentTime > 24 * 60 * 60 * 1000) {
             const reminderNotifId = `register_${activity.acti_title}`;
-            const existingReminder = notifications.find(n => n.content.data.notifId === reminderNotifId);
-            if (!existingReminder) {
-                Notifications.scheduleNotificationAsync({
-                    content: {
-                        title: 'Registration Reminder',
-                        body: `Don't forget to register for: ${activity.acti_title}`,
-                        data: {
-                            notifId: reminderNotifId,
-                            type: 'registration_reminder',
-                            route: 'activity',
-                            params: {
-                                scolaryear: activity.scolaryear,
-                                codemodule: activity.codemodule,
-                                codeinstance: activity.codeinstance,
-                                codeacti: activity.codeacti
-                            }
+            Notifications.cancelScheduledNotificationAsync(reminderNotifId);
+            Notifications.scheduleNotificationAsync({
+                content: {
+                    title: 'Registration Reminder',
+                    body: `Don't forget to register for: ${activity.acti_title}`,
+                    data: {
+                        notifId: reminderNotifId,
+                        type: 'registration_reminder',
+                        route: 'activity',
+                        params: {
+                            scolaryear: activity.scolaryear,
+                            codemodule: activity.codemodule,
+                            codeinstance: activity.codeinstance,
+                            codeacti: activity.codeacti
                         }
-                    },
-                    trigger: {
-                        type: SchedulableTriggerInputTypes.DATE,
-                        date: new Date(activityTime - (2 * 24 * 60 * 60 * 1000))
                     }
-                });
-            }
+                },
+                trigger: {
+                    type: SchedulableTriggerInputTypes.DATE,
+                    date: new Date(activityTime - (2 * 24 * 60 * 60 * 1000))
+                }
+            });
         }
         if (activity.registered === 1) {
         const startNotifId = `start_${activity.acti_title}`;
-        const existingStartNotif = notifications.find(n => n.content.data.notifId === startNotifId);
-        if (!existingStartNotif) {
+        Notifications.cancelScheduledNotificationAsync(startNotifId);
+        if (activity.registered === 1) {
             Notifications.scheduleNotificationAsync({
                 content: {
                     title: 'Activity starting soon',

@@ -3,7 +3,7 @@ import useSession from "@/hooks/ctx";
 import { useEffect, useState } from "react";
 import { MarksType, NotesType, UserType } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { fetchImage, fetchMarks, fetchUser } from "@/utils/fetchData";
+import { fetchImage, fetchMarks, fetchtLogtime, fetchUser } from "@/utils/fetchData";
 import { Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 import { Settings } from "@tamagui/lucide-icons";
 import { fakeMarks, fakeUser } from "@/utils/fakeData";
@@ -66,7 +66,12 @@ export default function Profile() {
             }
         }
 
-        getData();
+        getData()
+        async function getLogTime() {
+            if (!session || session == 'guest') return
+            const logReq = await fetchtLogtime({session});
+        }
+        getLogTime()
     }, [session, reload]);
 
     if (isLoading || !user || !marks) {

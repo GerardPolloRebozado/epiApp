@@ -1,20 +1,20 @@
 import useSession from '@/hooks/ctx';
-import { MarksType, NotesType, UserType } from '@/types';
+import type { MarksType, NotesType, UserType } from '@/types';
 import { fakeMarks, fakeUser } from '@/utils/fakeData';
 import { fetchImage, fetchMarks, fetchUser, fetchtLogtime } from '@/utils/fetchData';
 import { Settings } from '@tamagui/lucide-icons';
 import { useRouter } from 'expo-router';
 import forEach from 'obliterator/foreach';
 import { useEffect, useState } from 'react';
-import { RefreshControl, StyleSheet, View, useColorScheme } from 'react-native';
-import { BarChart, barDataItem } from 'react-native-gifted-charts';
+import { RefreshControl, StyleSheet, useColorScheme } from 'react-native';
+import { BarChart, type barDataItem } from 'react-native-gifted-charts';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
 
 export default function Profile() {
   const { signOut, session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  let colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
   const [reload, setReload] = useState(true);
   const [user, setUser] = useState<UserType | null>(null);
   const [image, setImage] = useState<string>('error');
@@ -133,66 +133,82 @@ export default function Profile() {
             </YStack>
           </Card.Footer>
         </Card>
-        {logTime && (
-          <Card bordered padded>
-            <Card.Header>
-              <Paragraph size={'$5'}>Log time</Paragraph>
-              <Paragraph>This week: {getWeekTime()}</Paragraph>
-            </Card.Header>
-            <Card.Footer>
-              <BarChart
-                data={logTime}
-                barBorderRadius={10}
-                frontColor={'#0091d3'}
-                xAxisLabelTextStyle={{
-                  color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
-                }}
-                yAxisTextStyle={{
-                  color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
-                }}
-                maxValue={12}
-                renderTooltip={(item: barDataItem) => {
-                  return <ListItem title={item.value?.toFixed(2)} bordered borderRadius={'$10'} zIndex={100} />;
-                }}
-              />
-            </Card.Footer>
-          </Card>
-        )}
-        <YStack maxHeight={'70%'} gap={'$2'}>
-          <Paragraph size='$5' textAlign={'center'}>
-            Marks
-          </Paragraph>
-          <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => setReload(!reload)} />} gap={'$4'}>
-            <Accordion type={'multiple'} collapsable marginTop={'4'}>
-              {marks.modules.map((module) => (
-                <Accordion.Item value={module.codemodule} key={module.codemodule + module.codeinstance}>
-                  <Accordion.Trigger flexDirection='row' justifyContent='space-between'>
-                    <Paragraph>
-                      {module.title} <Text color={module.grade !== 'A' && module.grade !== 'B' && module.grade !== '-' ? 'red' : 'green'}>{module.grade !== '-' ? `- ${module.grade}` : ''}</Text>
-                    </Paragraph>
-                  </Accordion.Trigger>
-                  <Accordion.HeightAnimator animation='slow'>
-                    <Accordion.Content animation='slow' exitStyle={{ opacity: 0 }}>
-                      <YStack>
-                        {module.notes.map((note: NotesType) => (
-                          <YStack key={note.final_note + note.title}>
-                            <ListItem>
-                              <Paragraph>{note.title}</Paragraph> <Paragraph>{note.final_note.toString(10)}</Paragraph>
-                            </ListItem>
-                            <Separator />
-                          </YStack>
-                        ))}
-                      </YStack>
-                    </Accordion.Content>
-                  </Accordion.HeightAnimator>
-                </Accordion.Item>
-              ))}
-            </Accordion>
-          </ScrollView>
-          <Button onPress={signOut} bordered>
-            Logout
-          </Button>
-        </YStack>
+        <Accordion type='single' collapsable>
+          {logTime && (
+            <Accordion.Item value='logtime'>
+              <Accordion.Trigger>
+                <Paragraph>Log Time</Paragraph>
+              </Accordion.Trigger>
+              <Accordion.Content>
+                <Card bordered padded>
+                  <Card.Header>
+                    <Paragraph size={'$5'}>Log time</Paragraph>
+                    <Paragraph>This week: {getWeekTime()}</Paragraph>
+                  </Card.Header>
+                  <Card.Footer>
+                    <BarChart
+                      data={logTime}
+                      barBorderRadius={10}
+                      frontColor={'#0091d3'}
+                      xAxisLabelTextStyle={{
+                        color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      }}
+                      yAxisTextStyle={{
+                        color: colorScheme === 'dark' ? '#FFFFFF' : '#000000',
+                      }}
+                      maxValue={12}
+                      renderTooltip={(item: barDataItem) => {
+                        return <ListItem title={item.value?.toFixed(2)} bordered borderRadius={'$10'} zIndex={100} />;
+                      }}
+                    />
+                  </Card.Footer>
+                </Card>
+              </Accordion.Content>
+            </Accordion.Item>
+          )}
+          <Accordion.Item value='marks'>
+            <Accordion.Trigger>
+              <Paragraph>Marks</Paragraph>
+            </Accordion.Trigger>
+            <Accordion.Content>
+              <YStack maxHeight={'70%'} gap={'$2'}>
+                <Paragraph size='$5' textAlign={'center'}>
+                  Marks
+                </Paragraph>
+                <Accordion type={'multiple'} collapsable marginTop={'4'}>
+                  <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => setReload(!reload)} />} gap={'$4'}>
+                    {marks.modules.map((module) => (
+                      <Accordion.Item value={module.codemodule} key={module.codemodule + module.codeinstance}>
+                        <Accordion.Trigger flexDirection='row' justifyContent='space-between'>
+                          <Paragraph>
+                            {module.title} <Text color={module.grade !== 'A' && module.grade !== 'B' && module.grade !== '-' ? 'red' : 'green'}>{module.grade !== '-' ? `- ${module.grade}` : ''}</Text>
+                          </Paragraph>
+                        </Accordion.Trigger>
+                        <Accordion.HeightAnimator animation='slow'>
+                          <Accordion.Content animation='slow' exitStyle={{ opacity: 0 }}>
+                            <YStack>
+                              {module.notes.map((note: NotesType) => (
+                                <YStack key={note.final_note + note.title}>
+                                  <ListItem>
+                                    <Paragraph>{note.title}</Paragraph> <Paragraph>{note.final_note.toString(10)}</Paragraph>
+                                  </ListItem>
+                                  <Separator />
+                                </YStack>
+                              ))}
+                            </YStack>
+                          </Accordion.Content>
+                        </Accordion.HeightAnimator>
+                      </Accordion.Item>
+                    ))}
+                  </ScrollView>
+                </Accordion>
+              </YStack>
+            </Accordion.Content>
+          </Accordion.Item>
+        </Accordion>
+        <Button onPress={signOut} bordered>
+          Logout
+        </Button>
       </YStack>
     </SafeAreaView>
   );

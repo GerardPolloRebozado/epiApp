@@ -5,6 +5,7 @@ import { transformHours } from '@/utils/randomUtils';
 import JWT from 'expo-jwt';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Stack } from 'expo-router';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -207,6 +208,7 @@ export default function Activity() {
           <>
             <Paragraph>Appointments</Paragraph>
             <ScrollView>
+              {appointments.slots.length < 1 && <Paragraph>No appointments scheduled</Paragraph>}
               <Accordion type={'single'} collapsible>
                 {appointments.slots.map((slot) => {
                   return (

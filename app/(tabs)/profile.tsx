@@ -1,15 +1,15 @@
 import useSession from '@/hooks/ctx';
-import type { MarksType, NotesType, UserType } from '@/types';
-import { fakeMarks, fakeUser } from '@/utils/fakeData';
-import { fetchImage, fetchMarks, fetchUser, fetchtLogtime } from '@/utils/fetchData';
-import { Settings } from '@tamagui/lucide-icons';
-import { useRouter } from 'expo-router';
+import type {MarksType, NotesType, UserType} from '@/types';
+import {fakeMarks, fakeUser} from '@/utils/fakeData';
+import {fetchImage, fetchMarks, fetchtLogtime, fetchUser} from '@/utils/fetchData';
+import {Settings} from '@tamagui/lucide-icons';
+import {useRouter} from 'expo-router';
 import forEach from 'obliterator/foreach';
-import { useEffect, useState } from 'react';
-import { RefreshControl, StyleSheet, useColorScheme } from 'react-native';
-import { BarChart, type barDataItem } from 'react-native-gifted-charts';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack } from 'tamagui';
+import {useEffect, useState} from 'react';
+import {RefreshControl, StyleSheet, useColorScheme} from 'react-native';
+import {BarChart, type barDataItem} from 'react-native-gifted-charts';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack} from 'tamagui';
 
 export default function Profile() {
   const { signOut, session } = useSession();
@@ -133,7 +133,7 @@ export default function Profile() {
             </YStack>
           </Card.Footer>
         </Card>
-        <Accordion type='single' collapsable>
+        <Accordion type='single' collapsible>
           {logTime && (
             <Accordion.Item value='logtime'>
               <Accordion.Trigger>

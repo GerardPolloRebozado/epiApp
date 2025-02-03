@@ -77,6 +77,7 @@ export default function Profile() {
       }
       const logBody = await logReq.json();
       const current_week = await logBody.splice(-5);
+      console.log(current_week);
       const formatLogTime: barDataItem[] = await current_week.map((log: Array<any>) => {
         const value = log[1] / 3600;
         const label = new Date(log[0] * 1000).toLocaleDateString('en-US', { weekday: 'long' }).slice(0, 3);

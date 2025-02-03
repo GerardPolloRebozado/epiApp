@@ -1,21 +1,14 @@
 import useSession from '@/hooks/ctx';
-import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import CookieManager from '@react-native-cookies/cookies';
+import {Redirect, Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
+import {useEffect} from 'react';
 import WebView from 'react-native-webview';
-import { useEffect } from 'react';
 
 export default function Auth() {
   const { session, signIn } = useSession();
   const navigation = useNavigation();
   const router = useRouter();
   const params = useLocalSearchParams<{ cloudflare?: string }>();
-
-  navigation.setOptions({
-    title: params.cloudflare === 'true' ? 'Wait till cloudflare protection completes' : 'Please login',
-  });
-  if (session) {
-    router.push('/');
-  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -33,5 +26,13 @@ export default function Auth() {
     }, 1000);
   }, [signIn, params]);
 
-  return <WebView sharedCookiesEnabled={true} thirdPartyCookiesEnabled={true} source={{ uri: 'https://intra.epitech.eu' }} />;
+  if (session) {
+    return <Redirect href={'/'} />;
+  }
+  return (
+    <>
+      <Stack.Screen options={{ title: params.cloudflare === 'true' ? 'Wait till cloudflare protection completes' : 'Please login' }} />
+      <WebView sharedCookiesEnabled={true} thirdPartyCookiesEnabled={true} source={{ uri: 'https://intra.epitech.eu' }} />
+    </>
+  );
 }

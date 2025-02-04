@@ -1,5 +1,5 @@
 import JWT from 'expo-jwt';
-import { weekCalculator } from './randomUtils';
+import {weekCalculator} from './randomUtils';
 
 async function fetchEpitech(url: string, session: string, method?: 'GET' | 'POST' | 'PUT' | 'DELETE') {
   return await fetch(`https://intra.epitech.eu/${url}`, {
@@ -21,11 +21,11 @@ export async function fetchImage(session: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(data);
-    reader.onloadend = function () {
+    reader.onloadend = () => {
       const base64data = reader.result as string;
       resolve(base64data);
     };
-    reader.onerror = function () {
+    reader.onerror = () => {
       reject('error');
     };
   });

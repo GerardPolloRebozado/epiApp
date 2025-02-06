@@ -1,13 +1,13 @@
 import useSession from '@/hooks/ctx';
 import CookieManager from '@react-native-cookies/cookies';
-import {Redirect, Stack, useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
-import {useEffect} from 'react';
+import { Redirect, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import WebView from 'react-native-webview';
+import { Button } from 'tamagui';
+import { useEffect } from 'react';
 
 export default function Auth() {
   const { session, signIn } = useSession();
-  const navigation = useNavigation();
-  const router = useRouter();
+  useNavigation();
   const params = useLocalSearchParams<{ cloudflare?: string }>();
 
   useEffect(() => {
@@ -31,8 +31,17 @@ export default function Auth() {
   }
   return (
     <>
-      <Stack.Screen options={{ title: params.cloudflare === 'true' ? 'Wait till cloudflare protection completes' : 'Please login' }} />
-      <WebView sharedCookiesEnabled={true} thirdPartyCookiesEnabled={true} source={{ uri: 'https://intra.epitech.eu' }} />
+      <Stack.Screen
+        options={{ title: params.cloudflare === 'true' ? 'Wait till cloudflare protection completes' : 'Please login' }}
+      />
+      <Button margin={'$2'} onPress={() => signIn('guest')}>
+        Test user
+      </Button>
+      <WebView
+        sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
+        source={{ uri: 'https://intra.epitech.eu' }}
+      />
     </>
   );
 }

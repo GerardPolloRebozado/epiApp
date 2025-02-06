@@ -1,9 +1,9 @@
 import useSettings from '@/hooks/settings';
-import { Computer, Moon, Sun } from '@tamagui/lucide-icons';
-import { Stack, useNavigation } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Appearance, type ColorSchemeName, useColorScheme } from 'react-native';
-import { Card, CardFooter, H6, Paragraph, Separator, Spinner, ToggleGroup, YStack } from 'tamagui';
+import {Computer, Moon, Sun} from '@tamagui/lucide-icons';
+import {Stack} from 'expo-router';
+import {useEffect, useState} from 'react';
+import {Appearance, type ColorSchemeName, useColorScheme} from 'react-native';
+import {Card, CardFooter, H6, Paragraph, Separator, Spinner, ToggleGroup, YStack} from 'tamagui';
 
 export default function SettingsPage() {
   const settings = useSettings();
@@ -40,8 +40,17 @@ export default function SettingsPage() {
       <H6 marginBottom={'$4'} marginTop={'$6'}>
         Color mode
       </H6>
-      <ToggleGroup orientation={'horizontal'} type={'single'} disableDeactivation defaultValue={appliedScheme ? appliedScheme : 'system'}>
-        <ToggleGroup.Item value={'light'} onPress={() => change_theme('light')} aria-selected={appliedScheme === 'light'}>
+      <ToggleGroup
+        orientation={'horizontal'}
+        type={'single'}
+        disableDeactivation
+        defaultValue={appliedScheme ? appliedScheme : 'system'}
+      >
+        <ToggleGroup.Item
+          value={'light'}
+          onPress={() => change_theme('light')}
+          aria-selected={appliedScheme === 'light'}
+        >
           <Sun />
         </ToggleGroup.Item>
         <ToggleGroup.Item value={'system'} onPress={() => change_theme(null)} aria-selected={!appliedScheme}>
@@ -64,13 +73,21 @@ export default function SettingsPage() {
         <Spinner />
       ) : (
         <ToggleGroup orientation={'horizontal'} type={'single'} disableDeactivation defaultValue={notificationTime}>
-          <ToggleGroup.Item value={'5'} onPress={() => change_notifications(5)} aria-selected={appliedScheme === 'light'}>
+          <ToggleGroup.Item
+            value={'5'}
+            onPress={() => change_notifications(5)}
+            aria-selected={appliedScheme === 'light'}
+          >
             <Paragraph>5</Paragraph>
           </ToggleGroup.Item>
           <ToggleGroup.Item value={'15'} onPress={() => change_notifications(15)} aria-selected={!appliedScheme}>
             <Paragraph>15</Paragraph>
           </ToggleGroup.Item>
-          <ToggleGroup.Item value={'30'} onPress={() => change_notifications(30)} aria-selected={appliedScheme === 'dark'}>
+          <ToggleGroup.Item
+            value={'30'}
+            onPress={() => change_notifications(30)}
+            aria-selected={appliedScheme === 'dark'}
+          >
             <Paragraph>30</Paragraph>
           </ToggleGroup.Item>
         </ToggleGroup>

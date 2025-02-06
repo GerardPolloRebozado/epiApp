@@ -108,16 +108,20 @@ export default function Activity() {
       return;
     }
     setRegisterLoad(true);
-    registerActivity(session, local.year, local.module, local.city, local.activity, appointmentId, register).then((res) => {
-      if (res.ok) {
-        setReload(!reload);
-        setRegisterLoad(false);
-      }
-    });
+    registerActivity(session, local.year, local.module, local.city, local.activity, appointmentId, register).then(
+      (res) => {
+        if (res.ok) {
+          setReload(!reload);
+          setRegisterLoad(false);
+        }
+      },
+    );
   }
 
   function openActivity(activ: ActivityExtendedType) {
-    router.push(`/activity?year=${activ.scolaryear}&module=${activ.codemodule}&city=${activ.codeinstance}&activity=${activ.codeacti}`);
+    router.push(
+      `/activity?year=${activ.scolaryear}&module=${activ.codemodule}&city=${activ.codeinstance}&activity=${activ.codeacti}`,
+    );
   }
 
   return (
@@ -145,7 +149,15 @@ export default function Activity() {
               <Paragraph>Related activities</Paragraph>
               {relatedActivities.map((activity) => {
                 return (
-                  <Card justifyContent={'center'} padded radiused elevate marginTop={'$2'} key={activity.codeacti} onPress={() => openActivity(activity)}>
+                  <Card
+                    justifyContent={'center'}
+                    padded
+                    radiused
+                    elevate
+                    marginTop={'$2'}
+                    key={activity.codeacti}
+                    onPress={() => openActivity(activity)}
+                  >
                     <Card.Header>
                       <H6>{activity.title}</H6>
                       <Separator />
@@ -194,8 +206,16 @@ export default function Activity() {
                             {event.nb_inscrits}/{event.seats}
                           </Paragraph>
                         </XStack>
-                        {!registered && <Button onPress={() => buttonRegister(event.code, true)}>{registerLoad ? <Spinner /> : 'Register'}</Button>}
-                        {event.already_register != null && <Button onPress={() => buttonRegister(event.code, false)}>{registerLoad ? <Spinner /> : 'Unregister'}</Button>}
+                        {!registered && (
+                          <Button onPress={() => buttonRegister(event.code, true)}>
+                            {registerLoad ? <Spinner /> : 'Register'}
+                          </Button>
+                        )}
+                        {event.already_register != null && (
+                          <Button onPress={() => buttonRegister(event.code, false)}>
+                            {registerLoad ? <Spinner /> : 'Unregister'}
+                          </Button>
+                        )}
                       </YStack>
                     </Card.Footer>
                   </Card>
@@ -222,7 +242,15 @@ export default function Activity() {
                         <Accordion.Content>
                           {slot.slots.map((appointmentSlot) => {
                             return (
-                              <Card justifyContent={'center'} padded radiused elevate marginTop={'$2'} key={appointmentSlot.id} bordered>
+                              <Card
+                                justifyContent={'center'}
+                                padded
+                                radiused
+                                elevate
+                                marginTop={'$2'}
+                                key={appointmentSlot.id}
+                                bordered
+                              >
                                 <Card.Header>
                                   <H6>
                                     {new Date(appointmentSlot.date).toLocaleString('en-US', {
@@ -235,12 +263,22 @@ export default function Activity() {
                                   </H6>
                                 </Card.Header>
                                 <Card.Footer justifyContent={'center'} alignItems={'center'}>
-                                  {appointmentSlot.master && appointmentSlot.master.login !== JWT.decode(session, null).login ? (
+                                  {appointmentSlot.master &&
+                                  appointmentSlot.master.login !== JWT.decode(session, null).login ? (
                                     <Paragraph>Someone already registered</Paragraph>
-                                  ) : appointmentSlot.master && appointmentSlot.master.login === JWT.decode(session, null).login ? (
-                                    <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), false)}>Unregister</Button>
+                                  ) : appointmentSlot.master &&
+                                    appointmentSlot.master.login === JWT.decode(session, null).login ? (
+                                    <Button
+                                      onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), false)}
+                                    >
+                                      Unregister
+                                    </Button>
                                   ) : (
-                                    <Button onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), true)}>Register</Button>
+                                    <Button
+                                      onPress={() => buttonRegisterAppointment(appointmentSlot.id.toString(10), true)}
+                                    >
+                                      Register
+                                    </Button>
                                   )}
                                 </Card.Footer>
                               </Card>

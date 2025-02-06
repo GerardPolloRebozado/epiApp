@@ -1,15 +1,28 @@
 import useSession from '@/hooks/ctx';
-import type {MarksType, NotesType, UserType} from '@/types';
-import {fakeMarks, fakeUser} from '@/utils/fakeData';
-import {fetchImage, fetchMarks, fetchtLogtime, fetchUser} from '@/utils/fetchData';
-import {Settings} from '@tamagui/lucide-icons';
-import {useRouter} from 'expo-router';
+import type { MarksType, NotesType, UserType } from '@/types';
+import { fakeMarks, fakeUser } from '@/utils/fakeData';
+import { fetchImage, fetchMarks, fetchtLogtime, fetchUser } from '@/utils/fetchData';
+import { Settings } from '@tamagui/lucide-icons';
+import { useRouter } from 'expo-router';
 import forEach from 'obliterator/foreach';
-import {useEffect, useState} from 'react';
-import {RefreshControl, StyleSheet, useColorScheme} from 'react-native';
-import {BarChart, type barDataItem} from 'react-native-gifted-charts';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Accordion, Avatar, Button, Card, ListItem, Paragraph, ScrollView, Separator, Spinner, Text, XStack, YStack} from 'tamagui';
+import { useEffect, useState } from 'react';
+import { RefreshControl, StyleSheet, useColorScheme } from 'react-native';
+import { BarChart, type barDataItem } from 'react-native-gifted-charts';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  Accordion,
+  Avatar,
+  Button,
+  Card,
+  ListItem,
+  Paragraph,
+  ScrollView,
+  Separator,
+  Spinner,
+  Text,
+  XStack,
+  YStack,
+} from 'tamagui';
 
 export default function Profile() {
   const { signOut, session } = useSession();
@@ -177,12 +190,22 @@ export default function Profile() {
                   Marks
                 </Paragraph>
                 <Accordion type={'multiple'} collapsable marginTop={'4'}>
-                  <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => setReload(!reload)} />} gap={'$4'}>
+                  <ScrollView
+                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={() => setReload(!reload)} />}
+                    gap={'$4'}
+                  >
                     {marks.modules.map((module) => (
                       <Accordion.Item value={module.codemodule} key={module.codemodule + module.codeinstance}>
                         <Accordion.Trigger flexDirection='row' justifyContent='space-between'>
                           <Paragraph>
-                            {module.title} <Text color={module.grade !== 'A' && module.grade !== 'B' && module.grade !== '-' ? 'red' : 'green'}>{module.grade !== '-' ? `- ${module.grade}` : ''}</Text>
+                            {module.title}{' '}
+                            <Text
+                              color={
+                                module.grade !== 'A' && module.grade !== 'B' && module.grade !== '-' ? 'red' : 'green'
+                              }
+                            >
+                              {module.grade !== '-' ? `- ${module.grade}` : ''}
+                            </Text>
                           </Paragraph>
                         </Accordion.Trigger>
                         <Accordion.HeightAnimator animation='slow'>
@@ -191,7 +214,8 @@ export default function Profile() {
                               {module.notes.map((note: NotesType) => (
                                 <YStack key={note.final_note + note.title}>
                                   <ListItem>
-                                    <Paragraph>{note.title}</Paragraph> <Paragraph>{note.final_note.toString(10)}</Paragraph>
+                                    <Paragraph>{note.title}</Paragraph>{' '}
+                                    <Paragraph>{note.final_note.toString(10)}</Paragraph>
                                   </ListItem>
                                   <Separator />
                                 </YStack>

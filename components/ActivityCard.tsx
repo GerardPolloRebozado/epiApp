@@ -1,11 +1,11 @@
-import type {Activity, ActivityType, AppointmentType} from '@/types';
-import {CircleCheck, CircleX} from '@tamagui/lucide-icons';
-import {Link} from 'expo-router';
-import {ListItem, Text} from 'tamagui';
-import {useEffect, useState} from "react";
-import useSession from "@/hooks/ctx";
-import {fetchAppointments} from "@/utils/fetchData";
-import JWT from "expo-jwt";
+import type { Activity, ActivityType, AppointmentType } from '@/types';
+import { CircleCheck, CircleX } from '@tamagui/lucide-icons';
+import { Link } from 'expo-router';
+import { ListItem, Text } from 'tamagui';
+import { useEffect, useState } from 'react';
+import useSession from '@/hooks/ctx';
+import { fetchAppointments } from '@/utils/fetchData';
+import JWT from 'expo-jwt';
 
 export default function ActivityCard({ activity, type }: { activity: Activity; type: ActivityType }) {
   let dateText: string;
@@ -36,7 +36,13 @@ export default function ActivityCard({ activity, type }: { activity: Activity; t
         const appointments: AppointmentType = await appointmentsResponse.json();
         const userLogin = JWT.decode(session, null).login;
 
-        const registered = appointments.slots.some((slot) => slot.slots.some((appointment) => appointment.members.some((member) => member.login === userLogin) || appointment.master?.login === userLogin));
+        const registered = appointments.slots.some((slot) =>
+          slot.slots.some(
+            (appointment) =>
+              appointment.members.some((member) => member.login === userLogin) ||
+              appointment.master?.login === userLogin,
+          ),
+        );
 
         setIsRegistered(registered);
       } catch (error) {
@@ -82,8 +88,17 @@ export default function ActivityCard({ activity, type }: { activity: Activity; t
   }
 
   return (
-    <Link href={`/activity?year=${activity.scolaryear}&module=${activity.codemodule}&city=${activity.codeinstance}&activity=${activity.codeacti}`}>
-      <ListItem key={activity.codeacti + activity.begin_event} bordered radiused justifyContent={'flex-start'} alignContent={'center'} gap={'$2'}>
+    <Link
+      href={`/activity?year=${activity.scolaryear}&module=${activity.codemodule}&city=${activity.codeinstance}&activity=${activity.codeacti}`}
+    >
+      <ListItem
+        key={activity.codeacti + activity.begin_event}
+        bordered
+        radiused
+        justifyContent={'flex-start'}
+        alignContent={'center'}
+        gap={'$2'}
+      >
         {isRegistered ? <CircleCheck /> : <CircleX />} {/* Use state here */}
         <Text maxWidth={'60%'}>{activity.acti_title}</Text> <Text>{dateText}</Text>
       </ListItem>

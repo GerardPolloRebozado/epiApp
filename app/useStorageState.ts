@@ -5,7 +5,10 @@ import { Platform } from 'react-native';
 type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
 
 function useAsyncState<T>(initialValue: [boolean, T | null] = [true, null]): UseStateHook<T> {
-  return useReducer((state: [boolean, T | null], action: T | null = null): [boolean, T | null] => [false, action], initialValue) as UseStateHook<T>;
+  return useReducer(
+    (state: [boolean, T | null], action: T | null = null): [boolean, T | null] => [false, action],
+    initialValue,
+  ) as UseStateHook<T>;
 }
 
 async function setLargeItemAsync(key: string, value: string | null) {
